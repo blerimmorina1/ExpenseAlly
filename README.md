@@ -19,9 +19,11 @@ Follow these steps to set up and run the project locally.
 
 ### 1. Install Dependencies
 
-Install the necessary dependencies using npm or yarn:
+Navigate to the frontend directory and install the necessary dependencies using npm or yarn:
 
 ```bash
+cd frontend
+
 # Using npm
 npm install
 
