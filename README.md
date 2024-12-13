@@ -8,7 +8,7 @@ This is the frontend application for **ExpenseAlly**, built with Vue 3, TypeScri
 
 Before you start, ensure you have the following installed on your system:
 
-- **Node.js** (v18 or later)  
+- **Node.js** (v18 or higher)
   [Download Node.js](https://nodejs.org/)
 
 - **npm** or **yarn** (comes with Node.js installation)
