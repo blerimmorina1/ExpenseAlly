@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Common\Interfaces - Copy\**" />
+    <EmbeddedResource Remove="Common\Interfaces - Copy\**" />
+    <None Remove="Common\Interfaces - Copy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\TransactionCategories\Commands\" />
+    <Folder Include="Features\TransactionCategories\Dtos\" />
+    <Folder Include="Features\TransactionCategories\Queries\" />
+    <Folder Include="Features\Transactions\Commands\" />
+    <Folder Include="Features\Transactions\Dtos\" />
+    <Folder Include="Features\Transactions\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExpenseAlly.Domain\ExpenseAlly.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,66 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# User-Specific Files
+*.user
+*.suo
+*.vcxproj.user
+*.pdb
+*.rsuser
+
+# IDE Configuration
+.vscode/
+.idea/
+
+# Visual Studio Working Files
+.vs/
+launch.vs.json
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# OS-Specific Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Package Folders
+node_modules/
+packages/
+
+# Generated Files
+*.dll
+*.exe
+*.cache
+*.class
+*.csproj.user
+*.generated.cs
+
+# Coverage Results
+*.coverage
+*.coveragexml
+
+# Deployment Files
+.publish/
+deployments/
+
+# App Configuration
+appsettings.*.json
+secrets.json
+
+# Backup Files
+*.bak
+*.swp
+*.tmp
+
+# Git-specific Files
+*.orig
+
+# Temporary Files
+*.tmp
+*.temp
+*.tmp.*
