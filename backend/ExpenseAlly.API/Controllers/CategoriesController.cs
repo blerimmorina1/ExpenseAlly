@@ -1,21 +1,12 @@
 ﻿using ExpenseAlly.Application.Features.TransactionCategories.Commands;
 using ExpenseAlly.Application.Features.TransactionCategories.Dtos;
 using ExpenseAlly.Application.Features.TransactionCategories.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseAlly.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController : ApiControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public CategoriesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
 
         [HttpGet]
         public async Task<ActionResult<List<TransactionCategoryDto>>> GetCategories()

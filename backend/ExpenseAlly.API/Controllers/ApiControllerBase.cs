@@ -8,9 +8,9 @@ namespace ExpenseAlly.API.Controllers;
 [Route("api/[controller]")]
 public class ApiControllerBase : ControllerBase
 {
-    private ISender? _mediator;
+    private ISender? mediator;
 
-    protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
+    protected ISender _mediator => mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
     private ICurrentUserService? _currentUserService;
     protected ICurrentUserService CurrentUserService => _currentUserService ??= HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();

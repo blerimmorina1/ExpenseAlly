@@ -11,18 +11,18 @@ public class AccountController : ApiControllerBase
     [HttpPost("register")]
     public async Task<ResponseDto> Register(RegisterUserCommand request)
     {
-        return await Mediator.Send(request);
+        return await _mediator.Send(request);
     }
 
     [HttpPost("login")]
     public async Task<TokenResponseDto> Login(LoginUserCommand request)
     {
-        return await Mediator.Send(request);
+        return await _mediator.Send(request);
     }
 
     [HttpPost("refreshToken")]
     public async Task<TokenResponseDto> RefreshToken(RefreshTokenCommand request)
     {
-        return await Mediator.Send(request);
+        return await _mediator.Send(request);
     }
 }
