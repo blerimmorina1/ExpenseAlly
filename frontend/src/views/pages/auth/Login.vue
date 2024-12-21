@@ -1,14 +1,55 @@
-<script setup>
+<script setup lang="ts">
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'primevue/usetoast';
+import api from '@/services/api';
 
 const email = ref('');
 const password = ref('');
 const checked = ref(false);
+const loading = ref(false);
+
+const toast = useToast();
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogin = async () => {
+  loading.value = true;
+
+  try {
+    const response = await api.post('/login', {
+      email: email.value,
+      password: password.value,
+    });
+
+    authStore.setToken(response.data.token);
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Login successful!',
+      life: 3000,
+    });
+
+    router.push('/');
+  } catch (error: any) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response?.data?.message || 'Login failed',
+      life: 3000,
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
   <FloatingConfigurator />
+  <Toast />
   <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
     <div class="flex flex-col items-center justify-center">
       <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -32,7 +73,7 @@ const checked = ref(false);
               </div>
               <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
             </div>
-            <Button label="Sign In" class="w-full" as="router-link" to="/"></Button>
+            <Button label="Sign In" class="w-full" :loading="loading" @click="handleLogin" />
           </div>
 
           <div class="text-center mt-6">

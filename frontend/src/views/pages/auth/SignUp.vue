@@ -1,16 +1,57 @@
-<script setup>
+<script setup lang="ts">
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
+import api from '@/services/api';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
 const first_name = ref('');
 const last_name = ref('');
 const email = ref('');
 const password = ref('');
 const confirm_password = ref('');
+const loading = ref(false);
+const router = useRouter();
+const toast = useToast();
+const authStore = useAuthStore();
+
+const handleSignup = async () => {
+  if (password.value !== confirm_password.value) {
+    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Passwords do not match!', life: 3000 });
+    return;
+  }
+
+  loading.value = true;
+
+  try {
+    const response = await api.post('/register', {
+      first_name: first_name.value,
+      last_name: last_name.value,
+      email: email.value,
+      password: password.value,
+      confirm_password: confirm_password.value
+    });
+
+    authStore.setToken(response.data.token);
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Account created successfully!', life: 3000 });
+    router.push('/');
+  } catch (error: any) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response?.data?.message || 'Signup failed',
+      life: 3000,
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
   <FloatingConfigurator />
+  <Toast />
   <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
     <div class="flex flex-col items-center justify-center">
       <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -21,11 +62,11 @@ const confirm_password = ref('');
           </div>
 
           <div>
-            <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First name</label>
-            <InputText id="email1" type="text" placeholder="First name" class="w-full md:w-[30rem] mb-4" v-model="first_name" />
+            <label for="firstname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First name</label>
+            <InputText id="firstname" type="text" placeholder="First name" class="w-full md:w-[30rem] mb-4" v-model="first_name" />
 
-            <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Last name</label>
-            <InputText id="email1" type="text" placeholder="Last name" class="w-full md:w-[30rem] mb-4" v-model="last_name" />
+            <label for="lastname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Last name</label>
+            <InputText id="lastname" type="text" placeholder="Last name" class="w-full md:w-[30rem] mb-4" v-model="last_name" />
 
             <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
             <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-4" v-model="email" />
@@ -36,7 +77,7 @@ const confirm_password = ref('');
             <label for="password2" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Confirm password</label>
             <Password id="password2" v-model="confirm_password" placeholder="Confirm password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
-            <Button label="Sign Up" class="w-full mt-8" as="router-link" to="/"></Button>
+            <Button label="Sign Up" class="w-full mt-8" :loading="loading" @click="handleSignup" />
           </div>
 
           <div class="text-center mt-6">
