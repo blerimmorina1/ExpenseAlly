@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Account\Queries\" />
     <Folder Include="Features\TransactionCategories\Commands\" />
     <Folder Include="Features\TransactionCategories\Dtos\" />
     <Folder Include="Features\TransactionCategories\Queries\" />
@@ -22,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

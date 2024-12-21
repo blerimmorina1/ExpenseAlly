@@ -1,6 +1,11 @@
+using ExpenseAlly.API.Middlewares;
+using ExpenseAlly.Application.Features.Account.Validators;
 using ExpenseAlly.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +15,7 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -22,6 +28,26 @@ builder.Services.AddSwaggerGen(swagger =>
         Title = "ExpenseAlly API",
         Description = "Personal expense tracker API."
     });    
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 var app = builder.Build();
@@ -43,10 +69,11 @@ using (var scope = app.Services.CreateScope())
     await initialiser.SeedAsync();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 
 var option = new RewriteOptions();
 option.AddRedirect("^$", "swagger");

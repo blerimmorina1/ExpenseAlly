@@ -1,9 +1,11 @@
 ﻿using ExpenseAlly.Domain.Entities;
+using ExpenseAlly.Infrastructure.Identity;
 using ExpenseAlly.Infrastructure.Persistence.Interceptors;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ExpenseAlly.Infrastructure.Persistence;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext :  IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     private readonly IMediator _mediator;
     private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
