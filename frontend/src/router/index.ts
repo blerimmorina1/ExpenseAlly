@@ -128,7 +128,12 @@ const routes: RouteRecordRaw[] = [
     path: '/auth/access',
     name: 'access',
     component: () => import('@/views/pages/auth/Access.vue')
-  }
+  },
+  {
+    path: '/categories',
+    name: 'Categories',
+    component: () => import('@/views/pages/CategoriesView.vue'),
+  },
 ];
 
 const router = createRouter({
