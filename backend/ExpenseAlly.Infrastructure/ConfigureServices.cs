@@ -1,6 +1,8 @@
-﻿using ExpenseAlly.Infrastructure.Persistence;
+﻿using ExpenseAlly.Infrastructure.Identity;
+using ExpenseAlly.Infrastructure.Persistence;
 using ExpenseAlly.Infrastructure.Persistence.Interceptors;
 using ExpenseAlly.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,8 +20,14 @@ public static class ConfigureServices
 
         services.AddScoped<ApplicationDbContextInitialiser>();
 
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
         services.AddTransient<IDateTime, DateTimeService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }

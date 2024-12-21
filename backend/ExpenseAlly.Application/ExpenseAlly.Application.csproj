@@ -15,14 +15,19 @@
   <ItemGroup>
     <Folder Include="Features\Transactions\Commands\" />
     <Folder Include="Features\Transactions\Dtos\" />
+    <Folder Include="Features\Account\Queries\" />
+    <Folder Include="Features\TransactionCategories\Commands\" />
+    <Folder Include="Features\TransactionCategories\Dtos\" />
+    <Folder Include="Features\TransactionCategories\Queries\" />
     <Folder Include="Features\Transactions\Commands\" />
     <Folder Include="Features\Transactions\Dtos\" />
-    <Folder Include="Features\Transactions\Queries\" />
     <Folder Include="Features\Transactions\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
