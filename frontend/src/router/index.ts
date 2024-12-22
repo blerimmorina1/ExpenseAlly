@@ -1,16 +1,17 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: AppLayout,
+    meta: { requiresAuth: true },
     children: [
       {
         path: '/',
         name: 'dashboard',
         component: () => import('@/views/Dashboard.vue'),
-        meta: { requiresAuth: true },
       },
       {
         path: '/uikit/formlayout',
@@ -141,9 +142,13 @@ const router = createRouter({
   routes
 });
 
+// Navigation Guard for Authentication
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    next("/auth/login");
+  const authStore = useAuthStore();
+  const isAuthenticated = authStore.isAuthenticated();
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/auth/login');
   } else {
     next();
   }

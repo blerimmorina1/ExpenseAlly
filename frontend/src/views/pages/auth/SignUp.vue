@@ -33,9 +33,10 @@ const handleSignup = async () => {
       confirmPassword: confirm_password.value
     });
 
-    authStore.setToken(response.data.token);
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Account created successfully!', life: 3000 });
-    router.push('/');
+    if (response.data.success) {
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Account created successfully!', life: 3000 });
+      router.push('/auth/login');
+    }
   } catch (error: any) {
     toast.add({
       severity: 'error',

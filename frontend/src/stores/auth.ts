@@ -2,11 +2,13 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string | null>(null);
+  const token = ref<string | null>(localStorage.getItem('auth_token'));
+
+  const isAuthenticated = () => !!token.value;
 
   const setToken = (newToken: string) => {
     token.value = newToken;
-    localStorage.setItem('auth_token', newToken); // Persist token
+    localStorage.setItem('auth_token', newToken);
   };
 
   const clearToken = () => {
@@ -21,5 +23,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  return { token, setToken, clearToken, loadTokenFromStorage };
+  return { token, setToken, clearToken, isAuthenticated, loadTokenFromStorage };
 });
