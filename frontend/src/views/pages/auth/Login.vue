@@ -19,7 +19,7 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await api.post('/login', {
+    const response = await api.post('/account/login', {
       email: email.value,
       password: password.value,
     });
