@@ -26,11 +26,11 @@ const handleSignup = async () => {
 
   try {
     const response = await api.post('/account/register', {
-      first_name: first_name.value,
-      last_name: last_name.value,
+      firstName: first_name.value,
+      lastName: last_name.value,
       email: email.value,
       password: password.value,
-      confirm_password: confirm_password.value
+      confirmPassword: confirm_password.value
     });
 
     authStore.setToken(response.data.token);

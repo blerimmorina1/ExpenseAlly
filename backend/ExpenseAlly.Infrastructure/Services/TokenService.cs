@@ -141,7 +141,7 @@ public class TokenService : ITokenService
             {
                 AccessToken = token,
                 RefreshToken = refreshToken.RefreshToken,
-                Expiry = user.RefreshTokenExpiryTime
+                Expiry = user.RefreshTokenExpiryTime.Value
             };
         }
         catch (Exception e)

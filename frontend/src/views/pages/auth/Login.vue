@@ -24,7 +24,7 @@ const handleLogin = async () => {
       password: password.value,
     });
 
-    authStore.setToken(response.data.token);
+    authStore.setToken(response.data.accessToken);
 
     toast.add({
       severity: 'success',
