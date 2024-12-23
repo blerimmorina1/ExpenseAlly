@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import categoryService from '@/services/categoryService';
+import categoryService from '@/services/CategoryService';
 
 export default {
   props: ['categories'],
