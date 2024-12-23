@@ -21,6 +21,7 @@ const types = [
   { label: "Income", value: "Income" },
   { label: "Expense", value: "Expense" }
 ];
+
 onMounted(() => {
   fetchCategories();
 });
@@ -78,24 +79,27 @@ function saveCategory() {
   }
 }
 
-
 function editCategory(cat) {
   category.value = { ...cat };
   categoryDialog.value = true;
 }
 
 function confirmDeleteCategory(cat) {
-  category.value = cat;
-  deleteCategoryDialog.value = true;
+  category.value = cat; // Save the category to be deleted
+  deleteCategoryDialog.value = true; // Open the confirmation dialog
 }
 
-function deleteCategory() {
-  CategoryService.deleteCategory(category.value.id).then(() => {
-    categories.value = categories.value.filter((val) => val.id !== category.value.id);
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Deleted', life: 3000 });
-    deleteCategoryDialog.value = false;
-    category.value = {};
-  });
+function deleteCategory(categoryId) {
+  CategoryService.deleteCategory(categoryId)
+    .then(() => {
+      toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Deleted', life: 3000 });
+      categories.value = categories.value.filter((category) => category.id !== categoryId); // Remove from UI
+      deleteCategoryDialog.value = false; // Close the confirmation dialog
+    })
+    .catch((error) => {
+      console.error('Error deleting category:', error);
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Could not delete category', life: 3000 });
+    });
 }
 
 function confirmDeleteSelected() {
@@ -162,7 +166,12 @@ function exportCSV() {
       </DataTable>
     </div>
 
-    <Dialog v-model:visible="categoryDialog" :style="{ width: '450px' }" header="Category Details" :modal="true">
+    <Dialog
+      v-model:visible="categoryDialog"
+      :style="{ width: '450px' }"
+      header="Category Details"
+      :modal="true"
+    >
       <div>
         <div>
           <label for="name" class="block font-bold mb-3">Name</label>
@@ -182,6 +191,19 @@ function exportCSV() {
       <template #footer>
         <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
         <Button label="Save" icon="pi pi-check" @click="saveCategory" />
+      </template>
+    </Dialog>
+
+    <Dialog
+      v-model:visible="deleteCategoryDialog"
+      :style="{ width: '450px' }"
+      header="Confirm"
+      :modal="true"
+    >
+      <p>Are you sure you want to delete this category?</p>
+      <template #footer>
+        <Button label="No" icon="pi pi-times" text @click="deleteCategoryDialog = false" />
+        <Button label="Yes" icon="pi pi-check" severity="danger" @click="deleteCategory(category.id)" />
       </template>
     </Dialog>
   </div>
