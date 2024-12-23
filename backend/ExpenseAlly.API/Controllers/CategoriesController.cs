@@ -31,22 +31,36 @@ namespace ExpenseAlly.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryRequest request)
         {
-            if (id != request.Id)
+            // ID mismatch check
+            if (id == Guid.Empty)
             {
-                return BadRequest("Mismatched category ID.");
+                return BadRequest("Category ID in the URL cannot be empty.");
             }
 
             var command = new UpdateCategoryCommand
             {
-                Id = id,
+                Id = id, // Use the ID from the URL
                 Name = request.Name,
                 Description = request.Description,
                 Type = request.Type
             };
 
-            await _mediator.Send(command);
-            return NoContent();
+            try
+            {
+                // Send the command to Mediator
+                await _mediator.Send(command);
+                return NoContent(); // Successfully updated
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Category with ID {id} was not found."); // Handle case where the ID is invalid
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
         }
+
 
 
         [HttpDelete("{id}")]

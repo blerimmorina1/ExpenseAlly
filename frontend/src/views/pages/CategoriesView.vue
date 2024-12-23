@@ -80,7 +80,11 @@ function saveCategory() {
 }
 
 function editCategory(cat) {
-  category.value = { ...cat };
+  // Map type to dropdown option
+  category.value = {
+    ...cat,
+    type: types.find((t) => t.value === cat.type) || null
+  };
   categoryDialog.value = true;
 }
 
