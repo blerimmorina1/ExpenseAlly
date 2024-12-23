@@ -31,6 +31,11 @@ const model = ref([
                 icon: 'pi pi-fw pi-home',
                 to: '/'
             },
+          {
+                label: 'Categories',
+                icon: 'pi pi-fw pi-bars',
+                to: '/categories'
+            },
             // {
             //     label: 'Landing',
             //     icon: 'pi pi-fw pi-globe',
