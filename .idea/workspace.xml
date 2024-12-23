@@ -4,43 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8f4e7d2-529f-4d80-8404-71d7073c3a62" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/views/pages/auth/SignUp.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/tailwind.config.ts" afterDir="false" />
+    <list default="true" id="d8f4e7d2-529f-4d80-8404-71d7073c3a62" name="Changes" comment="update sign up and add logout">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress/e2e/example.cy.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress/fixtures/example.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress/support/commands.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress/support/e2e.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/cypress/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/env.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/eslint.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/postcss.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/main.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Footer.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Header.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/__tests__/HelloWorld.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/icons/IconCommunity.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/icons/IconDocumentation.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/icons/IconEcosystem.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/icons/IconSupport.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/icons/IconTooling.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/HomeView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.app.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.node.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.vitest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/vitest.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ExpenseAlly.API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ExpenseAlly.API/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/components.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/AddCategory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/AddCategory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/CategoryList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/CategoryList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/EditCategory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/TransactionCategory/EditCategory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/RecentSalesWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/RecentSalesWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/StatsWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/StatsWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/CountryService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/CountryService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/CustomerService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/CustomerService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/NodeService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/NodeService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/PhotoService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/PhotoService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/ProductService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/ProductService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/service/categoryService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/categoryService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/pages/CategoriesView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/pages/CategoriesView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/pages/Crud.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/pages/Crud.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/InputDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/InputDoc.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/ListDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/ListDoc.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/MediaDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/MediaDoc.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/OverlayDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/OverlayDoc.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/TableDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/TableDoc.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/uikit/TreeDoc.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/uikit/TreeDoc.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +65,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/albismart/Desktop/ExpenseAlly/ExpenseAlly/frontend/src/components&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/albismart/Desktop/ExpenseAlly/ExpenseAlly&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -93,11 +79,14 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/frontend/src/components" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/service" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.112" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.222" />
       </set>
     </attachedChunks>
   </component>
@@ -114,7 +103,11 @@
       <workItem from="1734129505408" duration="2685000" />
       <workItem from="1734289555850" duration="5021000" />
       <workItem from="1734720320075" duration="2329000" />
-      <workItem from="1734723374901" duration="6291000" />
+      <workItem from="1734723374901" duration="10227000" />
+      <workItem from="1734772742488" duration="11095000" />
+      <workItem from="1734958701656" duration="670000" />
+      <workItem from="1734960895111" duration="426000" />
+      <workItem from="1734967400122" duration="1981000" />
     </task>
     <task id="LOCAL-00001" summary="update README">
       <option name="closed" value="true" />
@@ -132,7 +125,47 @@
       <option name="project" value="LOCAL" />
       <updated>1733956170060</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Created sign up and login interface">
+      <option name="closed" value="true" />
+      <created>1734731886529</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1734731886529</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add pinia">
+      <option name="closed" value="true" />
+      <created>1734781822609</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1734781822609</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add services for api">
+      <option name="closed" value="true" />
+      <created>1734781892132</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1734781892132</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update sign up and login">
+      <option name="closed" value="true" />
+      <created>1734781928255</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1734781928255</updated>
+    </task>
+    <task id="LOCAL-00007" summary="update sign up and add logout">
+      <option name="closed" value="true" />
+      <created>1734901040105</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1734901040105</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,6 +185,11 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update README" />
     <MESSAGE value="initial frontend" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial frontend" />
+    <MESSAGE value="Created sign up and login interface" />
+    <MESSAGE value="add pinia" />
+    <MESSAGE value="add services for api" />
+    <MESSAGE value="update sign up and login" />
+    <MESSAGE value="update sign up and add logout" />
+    <option name="LAST_COMMIT_MESSAGE" value="update sign up and add logout" />
   </component>
 </project>

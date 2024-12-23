@@ -19,7 +19,7 @@
 import CategoryList from '@/components/TransactionCategory/CategoryList.vue';
 import AddCategory from '@/components/TransactionCategory/AddCategory.vue';
 import EditCategory from '@/components/TransactionCategory/EditCategory.vue';
-import categoryService from '@/service/categoryService';
+import categoryService from '@/services/categoryService';
 
 export default {
   components: { CategoryList, AddCategory, EditCategory },

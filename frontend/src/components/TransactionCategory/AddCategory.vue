@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import categoryService from '@/service/categoryService';
+import categoryService from '@/services/categoryService';
 
 export default {
   data() {
