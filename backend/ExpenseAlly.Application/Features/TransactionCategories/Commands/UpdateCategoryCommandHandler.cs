@@ -1,8 +1,8 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
+using ExpenseAlly.Domain.Entities;
+using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExpenseAlly.Application.Features.TransactionCategories.Commands
@@ -18,20 +18,23 @@ namespace ExpenseAlly.Application.Features.TransactionCategories.Commands
 
         public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
+      
             var category = await _context.TransactionCategories.FindAsync(new object[] { request.Id }, cancellationToken);
 
+            
             if (category == null)
-                throw new Exception("Category not found");
+            {
+                throw new KeyNotFoundException($"Category with ID {request.Id} not found.");
+            }
 
             category.Name = request.Name;
             category.Description = request.Description;
             category.Type = request.Type;
 
+           
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }
-
-
     }
 }

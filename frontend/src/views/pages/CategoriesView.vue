@@ -17,7 +17,10 @@ const filters = ref({
 });
 
 const toast = useToast();
-
+const types = [
+  { label: "Income", value: "Income" },
+  { label: "Expense", value: "Expense" }
+];
 onMounted(() => {
   fetchCategories();
 });
@@ -45,24 +48,36 @@ function hideDialog() {
 function saveCategory() {
   submitted.value = true;
 
-  if (category.value.name?.trim()) {
-    if (category.value.id) {
-      CategoryService.updateCategory(category.value).then(() => {
-        categories.value = categories.value.map((c) =>
-          c.id === category.value.id ? category.value : c
-        );
+  if (!category.value.name) {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Name is required', life: 3000 });
+    return;
+  }
+
+  const payload = {
+    name: category.value.name,
+    description: category.value.description || "",
+    type: category.value.type.value === "Income" ? 1 : 2 // Map dropdown value to enum
+  };
+
+  if (category.value.id) {
+    // Update category
+    CategoryService.updateCategory({ ...payload, id: category.value.id })
+      .then(() => {
         toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
-        hideDialog();
+        categoryDialog.value = false;
+        fetchCategories();
       });
-    } else {
-      CategoryService.createCategory(category.value).then((newCategory) => {
-        categories.value.push(newCategory);
+  } else {
+    // Create category
+    CategoryService.createCategory(payload)
+      .then(() => {
         toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
-        hideDialog();
+        categoryDialog.value = false;
+        fetchCategories();
       });
-    }
   }
 }
+
 
 function editCategory(cat) {
   category.value = { ...cat };
@@ -160,7 +175,7 @@ function exportCSV() {
         </div>
         <div>
           <label for="type" class="block font-bold mb-3">Type</label>
-          <Select v-model="category.type" :options="[{ label: 'Income', value: 'Income' }, { label: 'Expense', value: 'Expense' }]" placeholder="Select a Type" />
+          <Select v-model="category.type" :options="types" optionLabel="label" placeholder="Select a Type" />
         </div>
       </div>
 

@@ -28,19 +28,26 @@ namespace ExpenseAlly.API.Controllers
             return CreatedAtAction(nameof(GetCategories), new { id }, id);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryRequest request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryRequest request)
         {
+            if (id != request.Id)
+            {
+                return BadRequest("Mismatched category ID.");
+            }
+
             var command = new UpdateCategoryCommand
             {
-                Id = request.Id,
+                Id = id,
                 Name = request.Name,
                 Description = request.Description,
                 Type = request.Type
             };
+
             await _mediator.Send(command);
             return NoContent();
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
