@@ -17,35 +17,32 @@ const toast = useToast();
 const authStore = useAuthStore();
 
 const handleSignup = async () => {
-  if (password.value !== confirm_password.value) {
-    toast.add({ severity: 'warn', summary: 'Warning', detail: 'Passwords do not match!', life: 3000 });
-    return;
-  }
+    if (password.value !== confirm_password.value) {
+        toast.add({ severity: 'warn', summary: 'Warning', detail: 'Passwords do not match!', life: 3000 });
+        return;
+    }
 
   loading.value = true;
 
   try {
-    const response = await api.post('/account/register', {
-      firstName: first_name.value,
-      lastName: last_name.value,
-      email: email.value,
-      password: password.value,
-      confirmPassword: confirm_password.value
-    });
+      const response = await api.post('/account/register', {
+          firstName: first_name.value,
+          lastName: last_name.value,
+          email: email.value,
+          password: password.value,
+          confirmPassword: confirm_password.value
+      });
 
-    if (response.data.success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Account created successfully!', life: 3000 });
-      router.push('/auth/login');
-    }
+      if (response.data.success) {
+          toast.add({ severity: 'success', summary: 'Success', detail: 'Account created successfully!', life: 3000 });
+          router.push('/auth/login');
+      } else {
+          toast.add({ severity: 'error', summary: 'Error', detail: response?.data?.errors[0].message || 'Signup failed', life: 3000 });
+      }
   } catch (error: any) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response?.data?.message || 'Signup failed',
-      life: 3000,
-    });
+       toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || 'Signup failed', life: 3000, });
   } finally {
-    loading.value = false;
+       loading.value = false;
   }
 };
 </script>

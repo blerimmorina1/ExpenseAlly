@@ -19,30 +19,22 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await api.post('/account/login', {
-      email: email.value,
-      password: password.value,
-    });
+      const response = await api.post('/account/login', {
+        email: email.value,
+        password: password.value,
+      });
 
-    authStore.setToken(response.data.accessToken);
+      authStore.setToken(response.data.accessToken);
 
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Login successful!',
-      life: 3000,
-    });
-
-    router.push('/');
+      if (response.data.success) {
+          router.push('/');
+      } else {
+          toast.add({ severity: 'error', summary: 'Error', detail: response?.data?.errors[0].message || 'Login failed', life: 3000 });
+      }
   } catch (error: any) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response?.data?.message || 'Login failed',
-      life: 3000,
-    });
+      toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || 'Login failed', life: 3000, });
   } finally {
-    loading.value = false;
+      loading.value = false;
   }
 };
 </script>
