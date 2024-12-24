@@ -16,7 +16,6 @@ const toggleProfileMenu = () => {
 
 const logout = () => {
   authStore.clearToken();
-  router.push('/auth/login');
   isMenuOpen.value = false;
 };
 </script>
