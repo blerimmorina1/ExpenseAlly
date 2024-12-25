@@ -48,9 +48,26 @@ function hideDialog() {
 
 function saveCategory() {
   submitted.value = true;
+  const errorMessages = [];
 
+  // Client-side validation
   if (!category.value.name) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Name is required', life: 3000 });
+    errorMessages.push('Name is required');
+  }
+
+  if (!category.value.type) {
+    errorMessages.push('Type is required');
+  }
+
+  if (category.value.description && category.value.description.length > 250) {
+    errorMessages.push('Description cannot exceed 250 characters');
+  }
+
+  if (errorMessages.length > 0) {
+    // Show all errors
+    errorMessages.forEach(message => {
+      toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+    });
     return;
   }
 
@@ -177,18 +194,25 @@ function exportCSV() {
       :modal="true"
     >
       <div>
+        <!-- Name Input -->
         <div>
           <label for="name" class="block font-bold mb-3">Name</label>
           <InputText id="name" v-model="category.name" required autofocus />
           <small v-if="submitted && !category.name" class="p-error">Name is required.</small>
         </div>
+
+        <!-- Description Input -->
         <div>
           <label for="description" class="block font-bold mb-3">Description</label>
           <Textarea id="description" v-model="category.description" rows="3" cols="20" />
+          <small v-if="submitted && category.description && category.description.length > 250" class="p-error">Description cannot exceed 250 characters.</small>
         </div>
+
+        <!-- Type Dropdown -->
         <div>
           <label for="type" class="block font-bold mb-3">Type</label>
           <Select v-model="category.type" :options="types" optionLabel="label" placeholder="Select a Type" />
+          <small v-if="submitted && !category.type" class="p-error">Type is required.</small>
         </div>
       </div>
 
@@ -198,6 +222,7 @@ function exportCSV() {
       </template>
     </Dialog>
 
+    <!-- Delete Category Confirmation Dialog -->
     <Dialog
       v-model:visible="deleteCategoryDialog"
       :style="{ width: '450px' }"

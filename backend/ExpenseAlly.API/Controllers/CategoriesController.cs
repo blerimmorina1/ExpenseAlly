@@ -1,10 +1,12 @@
 ﻿using ExpenseAlly.Application.Features.TransactionCategories.Commands;
 using ExpenseAlly.Application.Features.TransactionCategories.Dtos;
 using ExpenseAlly.Application.Features.TransactionCategories.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseAlly.API.Controllers
 {
+    [AllowAnonymous]
     public class CategoriesController : ApiControllerBase
     {
 
