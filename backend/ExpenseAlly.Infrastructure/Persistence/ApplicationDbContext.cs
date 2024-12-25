@@ -2,21 +2,27 @@
 using ExpenseAlly.Infrastructure.Identity;
 using ExpenseAlly.Infrastructure.Persistence.Interceptors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace ExpenseAlly.Infrastructure.Persistence;
 
-public class ApplicationDbContext :  IdentityDbContext<ApplicationUser>, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     private readonly IMediator _mediator;
+    private readonly ICurrentUserService _currentUserService;
+    public string? CurrentUserId { get; set; }
+
     private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        IMediator mediator,
+        IMediator mediator, ICurrentUserService currentUserService,
         AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
         : base(options)
     {
         _mediator = mediator;
+        _currentUserService = currentUserService;
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
     }
 
@@ -32,6 +38,14 @@ public class ApplicationDbContext :  IdentityDbContext<ApplicationUser>, IApplic
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseAuditableEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                ApplyQueryFilter(builder, entityType.ClrType);
+            }
+        }
+
         base.OnModelCreating(builder);
     }
 
@@ -45,5 +59,21 @@ public class ApplicationDbContext :  IdentityDbContext<ApplicationUser>, IApplic
         await _mediator.DispatchDomainEvents(this);
 
         return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void ApplyQueryFilter(ModelBuilder modelBuilder, Type entityType)
+    {
+        // Dynamically set the query filter
+        var method = typeof(ApplicationDbContext)
+            .GetMethod(nameof(ApplyQueryFilterForType), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            ?.MakeGenericMethod(entityType);
+
+        method?.Invoke(this, new object[] { modelBuilder });
+    }
+
+    private void ApplyQueryFilterForType<T>(ModelBuilder modelBuilder)
+    where T : BaseAuditableEntity
+    {
+        modelBuilder.Entity<T>().HasQueryFilter(e => e.CreatedBy == new Guid(_currentUserService.UserId));
     }
 }
