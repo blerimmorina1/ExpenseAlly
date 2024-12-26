@@ -1,5 +1,7 @@
 using ExpenseAlly.API.Middlewares;
 using ExpenseAlly.Application.Features.Account.Validators;
+using ExpenseAlly.Application.Features.TransactionCategories.Commands;
+using ExpenseAlly.Application.Features.TransactionCategories.Validators;
 using ExpenseAlly.Application.Features.Transactions.Commands;
 using ExpenseAlly.Application.Features.Transactions.Validators;
 using ExpenseAlly.Infrastructure.Persistence;
@@ -92,6 +94,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
+builder.Services.AddTransient<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>();
 
 var app = builder.Build();
 
