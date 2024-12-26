@@ -1,6 +1,9 @@
 using ExpenseAlly.API.Middlewares;
 using ExpenseAlly.Application.Features.Account.Validators;
+using ExpenseAlly.Application.Features.Transactions.Commands;
+using ExpenseAlly.Application.Features.Transactions.Validators;
 using ExpenseAlly.Infrastructure.Persistence;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
@@ -88,7 +91,7 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
-
+builder.Services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

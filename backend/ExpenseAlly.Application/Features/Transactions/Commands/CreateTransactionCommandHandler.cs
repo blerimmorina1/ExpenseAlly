@@ -1,60 +1,86 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Domain.Entities;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentValidation;
+using ExpenseAlly.Application.Common.Models;
+using Microsoft.Extensions.Logging;
 
 namespace ExpenseAlly.Application.Features.Transactions.Commands
 {
-    public class CreateTransactionCommandHandler : IRequestHandler<CreateTransactionCommand, Guid>
+    public class CreateTransactionCommandHandler : IRequestHandler<CreateTransactionCommand, ResponseDto>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IValidator<CreateTransactionCommand> _validator;
+        private readonly ILogger<CreateTransactionCommandHandler> _logger;
 
-        public CreateTransactionCommandHandler(IApplicationDbContext context)
+        public CreateTransactionCommandHandler(IApplicationDbContext context, IValidator<CreateTransactionCommand> validator, ILogger<CreateTransactionCommandHandler> logger)
         {
             _context = context;
+            _validator = validator;
+            _logger = logger;
         }
 
-        public async Task<Guid> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
         {
-            if (request.Transaction.CategoryId == null || request.Transaction.CategoryId == Guid.Empty)
+            // Validate the command
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
-                throw new ArgumentException("Category ID cannot be null or empty.");
+                return new ResponseDto
+                {
+                    Errors = validationResult.Errors.Select(e => new ErrorDto
+                    {
+                        Code = "ValidationError",
+                        Message = e.ErrorMessage
+                    })
+                };
             }
 
-            // Find the category without applying query filters
-            var category = await _context.TransactionCategories
-                .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
-
-            if (category == null)
+            try
             {
-                throw new ArgumentException($"Category with ID {request.Transaction.CategoryId} not found.");
+                var category = await _context.TransactionCategories
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
+
+                var transaction = new Transaction
+                {
+                    Type = request.Transaction.Type,
+                    CategoryId = request.Transaction.CategoryId,
+                    Amount = request.Transaction.Amount,
+                    Date = request.Transaction.Date,
+                    Notes = request.Transaction.Notes,
+                    Category = category
+                };
+
+                _context.Transactions.Add(transaction);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new ResponseDto
+                {
+                    Success = true
+                };
             }
-
-            // Validate transaction type against category type
-            if (category.Type != request.Transaction.Type)
+            catch (Exception ex)
             {
-                throw new ArgumentException($"Transaction type '{request.Transaction.Type}' does not match category type '{category.Type}'.");
+                _logger.LogError(ex, "An error occurred while creating the transaction.");
+                return new ResponseDto
+                {
+                    Errors = new List<ErrorDto>
+                    {
+                        new ErrorDto
+                        {
+                            Code = "InternalServerError",
+                            Message = "An error occurred while creating the transaction."
+                        }
+                    }
+                };
             }
-
-            // Create and add the transaction
-            var transaction = new Transaction
-            {
-                Type = request.Transaction.Type,
-                CategoryId = request.Transaction.CategoryId,
-                Amount = request.Transaction.Amount,
-                Date = request.Transaction.Date,
-                Notes = request.Transaction.Notes,
-                Category = category
-            };
-
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return transaction.Id;
         }
     }
 }
