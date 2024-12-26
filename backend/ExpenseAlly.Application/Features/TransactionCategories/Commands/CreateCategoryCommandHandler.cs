@@ -21,10 +21,10 @@ namespace ExpenseAlly.Application.Features.TransactionCategories.Commands
         {
             var category = new TransactionCategory
             {
+                Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                Type = request.Type,
-                //Created = DateTime.UtcNow
+                Type = request.Type
             };
 
             _context.TransactionCategories.Add(category);
