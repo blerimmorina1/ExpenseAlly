@@ -92,6 +92,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
