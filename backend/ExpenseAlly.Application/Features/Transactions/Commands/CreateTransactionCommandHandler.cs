@@ -19,32 +19,35 @@ namespace ExpenseAlly.Application.Features.Transactions.Commands
 
         public async Task<Guid> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
         {
-            if (request.CategoryId == null || request.CategoryId == Guid.Empty)
+            if (request.Transaction.CategoryId == null || request.Transaction.CategoryId == Guid.Empty)
             {
                 throw new ArgumentException("Category ID cannot be null or empty.");
             }
 
-            Console.WriteLine($"Finding category with ID: {request.CategoryId}");
-
-            var category = await _context.TransactionCategories.FindAsync(new object[] { request.CategoryId }, cancellationToken);
+            // Find the category without applying query filters
+            var category = await _context.TransactionCategories
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
 
             if (category == null)
             {
-                throw new ArgumentException($"Category with ID {request.CategoryId} not found.");
+                throw new ArgumentException($"Category with ID {request.Transaction.CategoryId} not found.");
             }
 
-            if (category.Type != request.Type)
+            // Validate transaction type against category type
+            if (category.Type != request.Transaction.Type)
             {
-                throw new ArgumentException($"Transaction type '{request.Type}' does not match category type '{category.Type}'.");
+                throw new ArgumentException($"Transaction type '{request.Transaction.Type}' does not match category type '{category.Type}'.");
             }
 
+            // Create and add the transaction
             var transaction = new Transaction
             {
-                Type = request.Type,
-                CategoryId = request.CategoryId,
-                Amount = request.Amount,
-                Date = request.Date,
-                Notes = request.Notes,
+                Type = request.Transaction.Type,
+                CategoryId = request.Transaction.CategoryId,
+                Amount = request.Transaction.Amount,
+                Date = request.Transaction.Date,
+                Notes = request.Transaction.Notes,
                 Category = category
             };
 
