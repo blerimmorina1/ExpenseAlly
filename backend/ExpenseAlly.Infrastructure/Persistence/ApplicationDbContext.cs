@@ -32,6 +32,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<TransactionCategory> TransactionCategories => Set<TransactionCategory>();
+    public DbSet<Budget> Budgets => Set<Budget>();
+    public DbSet<BudgetDetail> BudgetDetails => Set<BudgetDetail>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -60,31 +62,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
         return await base.SaveChangesAsync(cancellationToken);
     }
-    /*
-     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var userId = _currentUserService.UserId;
-
-        foreach (var entry in ChangeTracker.Entries<BaseAuditableEntity>())
-        {
-            if (entry.State == EntityState.Added)
-            {
-                entry.Entity.CreatedBy = new Guid(userId); // Populate CreatedBy
-                entry.Entity.CreatedOn = DateTime.UtcNow; // Populate CreatedOn
-            }
-            else if (entry.State == EntityState.Modified)
-            {
-                entry.Entity.LastModifiedBy = new Guid(userId); // Populate LastModifiedBy
-                entry.Entity.LastModifiedOn = DateTime.UtcNow; // Populate LastModifiedOn
-            }
-        }
-
-        await _mediator.DispatchDomainEvents(this);
-
-        return await base.SaveChangesAsync(cancellationToken);
-    }
-
-     */
+    
     private void ApplyQueryFilter(ModelBuilder modelBuilder, Type entityType)
     {
         // Dynamically set the query filter
