@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
-const api = axios.create({
+const apiService = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ const processQueue = (token: string | null, error: AxiosError | null) => {
 };
 
 // Request interceptor
-api.interceptors.request.use(
+apiService.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     const authStore = useAuthStore();
     if (authStore.token) {
@@ -39,7 +39,7 @@ api.interceptors.request.use(
 );
 
 // Response interceptor
-api.interceptors.response.use(
+apiService.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const authStore = useAuthStore();
@@ -66,9 +66,9 @@ api.interceptors.response.use(
         const newToken = await authStore.refreshAccessToken();
 
         if (newToken) {
-          api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+          apiService.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
           processQueue(newToken, null);
-          return api(originalRequest);
+          return apiService(originalRequest);
         }
       } catch (refreshError) {
         processQueue(null, refreshError as AxiosError);
@@ -82,4 +82,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default apiService;

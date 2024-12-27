@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue/usetoast';
-import api from '@/services/Api';
+import api from '@/services/ApiService';
 
 const email = ref('');
 const password = ref('');

@@ -2,11 +2,13 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import router from '@/router';
 import axios from 'axios';
+import { useToast } from 'primevue/usetoast';
 
 export const useAuthStore = defineStore('auth', () => {
   // States
   const token = ref<string | null>(localStorage.getItem('auth_token'));
   const refreshToken = ref<string | null>(localStorage.getItem('refresh_token'));
+  const toast = useToast();
 
   // Getters
   const isAuthenticated = () => !!token.value;
@@ -53,6 +55,12 @@ export const useAuthStore = defineStore('auth', () => {
       return response.data.token;
     } catch (error) {
       console.error('Failed to refresh token:', error);
+      toast.add({
+        severity: 'error',
+        summary: 'Unauthorized',
+        detail: 'Session expired. Please login again.',
+        life: 3000
+      });
       clearToken(); // Clear session on failure
       return null;
     }
