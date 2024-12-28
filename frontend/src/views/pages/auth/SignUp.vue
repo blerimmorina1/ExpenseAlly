@@ -49,7 +49,6 @@ const handleSignup = async () => {
 
 <template>
   <FloatingConfigurator />
-  <Toast />
   <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
     <div class="flex flex-col items-center justify-center">
       <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -59,7 +58,7 @@ const handleSignup = async () => {
             <span class="text-muted-color font-medium">Sign up to continue</span>
           </div>
 
-          <div>
+          <form @submit.prevent="handleSignup">
             <label for="firstname" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First name</label>
             <InputText id="firstname" type="text" placeholder="First name" class="w-full md:w-[30rem] mb-4" v-model="first_name" />
 
@@ -75,8 +74,8 @@ const handleSignup = async () => {
             <label for="password2" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Confirm password</label>
             <Password id="password2" v-model="confirm_password" placeholder="Confirm password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
-            <Button label="Sign Up" class="w-full mt-8" :loading="loading" @click="handleSignup" />
-          </div>
+            <Button type="submit" label="Sign Up" class="w-full mt-8" :loading="loading" />
+          </form>
 
           <div class="text-center mt-6">
             <p class="text-muted-color font-medium">
