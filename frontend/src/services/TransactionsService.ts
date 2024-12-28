@@ -11,13 +11,13 @@ export const TransactionService = {
     }
   },
 
-  createTransaction: async (transaction: { name: string; amount: number }) => {
+  createTransaction: async (payload) => {
     try {
-      const response = await api.post('/Transactions', transaction);
-      return response.data;
+        const response = await api.post('/Transactions', payload); // payload now includes the Transaction wrapper
+        return response.data;
     } catch (error) {
-      console.error('Error creating transaction:', error);
-      throw error;
+        console.error('Error creating transaction:', error.response?.data || error.message);
+        throw error;
     }
-  },
+},
 };

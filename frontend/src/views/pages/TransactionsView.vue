@@ -15,13 +15,11 @@ const transaction = ref({
     date: new Date().toISOString().split('T')[0], // Default to current date
     notes: '',
 });
-const submitted = ref(false);
 const toast = useToast();
 const typeOptions = [
     { label: 'Income', value: 1 },
     { label: 'Expense', value: 2 },
 ];
-const typeValidationError = ref('');
 
 // Fetch transactions and categories on mount
 onMounted(async () => {
@@ -33,20 +31,6 @@ onMounted(async () => {
     }
 });
 
-// Watch categoryId and automatically set type when category changes
-watch(
-    () => transaction.value.categoryId,
-    (newCategoryId) => {
-        const selectedCategory = categories.value.find((cat: any) => cat.id === newCategoryId);
-        if (selectedCategory) {
-            transaction.value.type = selectedCategory.type; // Auto-select type based on category
-            typeValidationError.value = ''; // Clear any existing validation error
-        } else {
-            transaction.value.type = null; // Reset if no category is selected
-        }
-    }
-);
-
 // Open the dialog for creating a new transaction
 function openNew() {
     transaction.value = {
@@ -56,48 +40,51 @@ function openNew() {
         date: new Date().toISOString().split('T')[0],
         notes: '',
     };
-    submitted.value = false;
     transactionDialog.value = true;
-    typeValidationError.value = '';
 }
 
 // Close the dialog
 function hideDialog() {
     transactionDialog.value = false;
-    submitted.value = false;
-    typeValidationError.value = '';
-}
-
-// Validate type consistency
-function validateType() {
-    const selectedCategory = categories.value.find((cat: any) => cat.id === transaction.value.categoryId);
-    if (selectedCategory && transaction.value.type !== selectedCategory.type) {
-        typeValidationError.value = `The selected type does not match the type of the chosen category (${selectedCategory.type === 1 ? 'Income' : 'Expense'}).`;
-    } else {
-        typeValidationError.value = ''; // Clear validation error if valid
-    }
 }
 
 // Save the transaction
 async function saveTransaction() {
-    submitted.value = true;
+    const payload = {
+        Transaction: {
+            CategoryId: transaction.value.categoryId,
+            Type: transaction.value.type,
+            Amount: transaction.value.amount,
+            Date: transaction.value.date ? new Date(transaction.value.date).toISOString() : null,
+            Notes: transaction.value.notes || null,
+        },
+    };
 
-    validateType();
-    if (typeValidationError.value) {
-        return;
-    }
+    console.log('Payload:', payload);
 
-    if (transaction.value.categoryId && transaction.value.type !== null && transaction.value.amount > 0) {
-        try {
-            const newTransaction = await TransactionService.createTransaction(transaction.value);
-            transactions.value.push(newTransaction);
-            toast.add({ severity: 'success', summary: 'Success', detail: 'Transaction created', life: 3000 });
-            transactionDialog.value = false;
-        } catch (error) {
-            toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to create transaction', life: 3000 });
+    try {
+        const response = await TransactionService.createTransaction(payload);
+        transactions.value.push(response);
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Transaction created', life: 3000 });
+        transactionDialog.value = false;
+    } catch (error) {
+        console.error('Error creating transaction:', error.response?.data || error.message);
+
+        // Log validation errors if present
+        if (error.response?.data?.errors) {
+            console.error('Validation Errors:', error.response.data.errors);
         }
+
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response?.data?.title || 'Failed to create transaction',
+            life: 3000,
+        });
     }
 }
+
+
 
 // Helper function to get the category name by ID
 function getCategoryName(categoryId: string): string {
@@ -142,11 +129,8 @@ function getCategoryName(categoryId: string): string {
                         :options="categories"
                         optionLabel="name"
                         optionValue="id"
-                        :class="{ 'p-invalid': submitted && !transaction.categoryId }"
                         placeholder="Select a Category"
-                        @change="validateType"
                     />
-                    <small v-if="submitted && !transaction.categoryId" class="p-error">Category is required.</small>
                 </div>
 
                 <div class="field">
@@ -157,11 +141,8 @@ function getCategoryName(categoryId: string): string {
                         :options="typeOptions"
                         optionLabel="label"
                         optionValue="value"
-                        :class="{ 'p-invalid': submitted && !transaction.type }"
                         placeholder="Select a Type"
-                        @change="validateType"
                     />
-                    <small v-if="typeValidationError" class="p-error">{{ typeValidationError }}</small>
                 </div>
 
                 <div class="field">
@@ -172,9 +153,7 @@ function getCategoryName(categoryId: string): string {
                         mode="currency"
                         currency="USD"
                         locale="en-US"
-                        :class="{ 'p-invalid': submitted && transaction.amount <= 0 }"
                     />
-                    <small v-if="submitted && transaction.amount <= 0" class="p-error">Amount must be greater than 0.</small>
                 </div>
 
                 <div class="field">
@@ -183,9 +162,7 @@ function getCategoryName(categoryId: string): string {
                         id="date"
                         type="date"
                         v-model="transaction.date"
-                        :class="{ 'p-invalid': submitted && !transaction.date }"
                     />
-                    <small v-if="submitted && !transaction.date" class="p-error">Date is required.</small>
                 </div>
 
                 <div class="field">
@@ -203,7 +180,6 @@ function getCategoryName(categoryId: string): string {
 </template>
 
 <style>
-/* Optional styles */
 .field {
     margin-bottom: 1rem;
 }
