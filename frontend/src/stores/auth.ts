@@ -49,10 +49,10 @@ export const useAuthStore = defineStore('auth', () => {
       });
 
       // Update tokens
-      setToken(response.data.token);
+      setToken(response.data.accessToken);
       setRefreshToken(response.data.refreshToken);
 
-      return response.data.token;
+      return response.data.accessToken;
     } catch (error) {
       console.error('Failed to refresh token:', error);
       toast.add({

@@ -74,7 +74,7 @@ const handleSignup = async () => {
             <label for="password2" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Confirm password</label>
             <Password id="password2" v-model="confirm_password" placeholder="Confirm password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
 
-            <Button type="submit" label="Sign Up" class="w-full mt-8" :loading="loading" />
+            <Button type="submit" icon="pi pi-user-plus" label="Sign Up" class="w-full mt-8" :loading="loading" />
           </form>
 
           <div class="text-center mt-6">

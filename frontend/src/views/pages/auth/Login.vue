@@ -25,6 +25,7 @@ const handleLogin = async () => {
       });
 
       authStore.setToken(response.data.accessToken);
+      authStore.setRefreshToken(response.data.refreshToken);
 
       if (response.data.success) {
           router.push('/');
@@ -64,7 +65,7 @@ const handleLogin = async () => {
               </div>
               <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
             </div>
-            <Button type="submit" label="Sign In" class="w-full" :loading="loading" />
+            <Button type="submit" icon="pi pi-user" label="Sign In" class="w-full" :loading="loading" />
           </form>
 
           <div class="text-center mt-6">
