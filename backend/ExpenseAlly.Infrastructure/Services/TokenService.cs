@@ -46,7 +46,7 @@ public class TokenService : ITokenService
         var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
             _configuration["Jwt:Audience"],
         claims,
-            expires: DateTime.Now.AddMinutes(15),
+            expires: DateTime.Now.AddMinutes(30),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -62,7 +62,7 @@ public class TokenService : ITokenService
         return new TokenResponseDto
         {
             RefreshToken = refreshToken,
-            Expiry = DateTime.UtcNow.AddDays(7)
+            Expiry = DateTime.Now.AddDays(7)
         };
     }
 
@@ -82,7 +82,7 @@ public class TokenService : ITokenService
         }
 
 
-        if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
         {
             throw new UnauthorizedException("Invalid refresh token.");
         }
