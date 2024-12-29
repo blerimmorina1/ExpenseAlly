@@ -73,7 +73,6 @@ builder.Services.AddSwaggerGen(swagger =>
 });
 
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -93,8 +92,6 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
-builder.Services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
-builder.Services.AddTransient<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>();
 
 var app = builder.Build();
 

@@ -20,7 +20,6 @@ namespace ExpenseAlly.Application.Features.TransactionCategories.Queries
         public async Task<List<TransactionCategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
             return await _context.TransactionCategories
-                    .IgnoreQueryFilters()
                     .Select(c => new TransactionCategoryDto
                     {
                         Id = c.Id,
@@ -29,7 +28,6 @@ namespace ExpenseAlly.Application.Features.TransactionCategories.Queries
                         Type = c.Type.ToString()
                     })
                     .ToListAsync(cancellationToken);
-
         }
     }
 }

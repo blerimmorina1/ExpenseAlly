@@ -103,6 +103,11 @@ const routes: RouteRecordRaw[] = [
         name: 'Categories',
         component: () => import('@/views/pages/CategoriesView.vue'),
       },
+      {
+        path: '/budgets',
+        name: 'Budgets',
+        component: () => import('@/views/pages/BudgetsView.vue'),
+      },
     ]
   },
   {
