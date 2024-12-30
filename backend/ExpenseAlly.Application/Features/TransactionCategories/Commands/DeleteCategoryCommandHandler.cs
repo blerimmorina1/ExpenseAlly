@@ -18,8 +18,9 @@ namespace ExpenseAlly.Application.Features.TransactionCategories.Commands
 
         public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _context.TransactionCategories.FindAsync(new object[] { request.Id }, cancellationToken);
-
+            var category = await _context.TransactionCategories
+                            .IgnoreQueryFilters()
+                            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
             if (category == null)
                 throw new Exception("Category not found");
 

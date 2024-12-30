@@ -4,143 +4,165 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 
-const categories = ref([]);
-const selectedCategories = ref();
+// Define Category type
+interface Category {
+    id?: string;
+    name: string;
+    description: string;
+    type: { label: string; value: string } | null;
+}
+
+// Data references
+const categories = ref<Category[]>([]);
+const selectedCategories = ref<Category[] | null>(null);
 const categoryDialog = ref(false);
 const deleteCategoryDialog = ref(false);
 const deleteCategoriesDialog = ref(false);
-const category = ref({});
+const category = ref<Category>({
+    id: undefined,
+    name: '',
+    description: '',
+    type: null,
+});
 const submitted = ref(false);
 const dt = ref();
 const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
 const toast = useToast();
 const types = [
-  { label: "Income", value: "Income" },
-  { label: "Expense", value: "Expense" }
+    { label: 'Income', value: 'Income' },
+    { label: 'Expense', value: 'Expense' },
 ];
 
+// Fetch categories on mount
 onMounted(() => {
-  fetchCategories();
+    fetchCategories();
 });
 
 async function fetchCategories() {
-  try {
-    const data = await CategoryService.getCategories();
-    categories.value = data;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-  }
+    try {
+        const data = await CategoryService.getCategories();
+        categories.value = data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    }
 }
 
 function openNew() {
-  category.value = {};
-  submitted.value = false;
-  categoryDialog.value = true;
+    category.value = {
+        id: undefined,
+        name: '',
+        description: '',
+        type: null,
+    };
+    submitted.value = false;
+    categoryDialog.value = true;
 }
 
 function hideDialog() {
-  categoryDialog.value = false;
-  submitted.value = false;
+    categoryDialog.value = false;
+    submitted.value = false;
 }
 
 function saveCategory() {
-  submitted.value = true;
-  const errorMessages = [];
+    submitted.value = true;
+    const errorMessages: string[] = [];
 
-  // Client-side validation
-  if (!category.value.name) {
-    errorMessages.push('Name is required');
-  }
+    // Client-side validation
+    if (!category.value.name) {
+        errorMessages.push('Name is required');
+    }
 
-  if (!category.value.type) {
-    errorMessages.push('Type is required');
-  }
+    if (!category.value.type) {
+        errorMessages.push('Type is required');
+    }
 
-  if (category.value.description && category.value.description.length > 250) {
-    errorMessages.push('Description cannot exceed 250 characters');
-  }
+    if (category.value.description && category.value.description.length > 250) {
+        errorMessages.push('Description cannot exceed 250 characters');
+    }
 
-  if (errorMessages.length > 0) {
-    // Show all errors
-    errorMessages.forEach(message => {
-      toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
-    });
-    return;
-  }
+    if (errorMessages.length > 0) {
+        errorMessages.forEach((message) => {
+            toast.add({ severity: 'error', summary: 'Error', detail: message, life: 3000 });
+        });
+        return;
+    }
 
-  const payload = {
-    name: category.value.name,
-    description: category.value.description || "",
-    type: category.value.type.value === "Income" ? 1 : 2 // Map dropdown value to enum
-  };
+    const payload = {
+        name: category.value.name,
+        description: category.value.description || '',
+        type: category.value.type?.value === 'Income' ? 1 : 2, // Map dropdown value to enum
+    };
 
-  if (category.value.id) {
-    // Update category
-    CategoryService.updateCategory({ ...payload, id: category.value.id })
-      .then(() => {
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
-        categoryDialog.value = false;
-        fetchCategories();
-      });
-  } else {
-    // Create category
-    CategoryService.createCategory(payload)
-      .then(() => {
-        toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
-        categoryDialog.value = false;
-        fetchCategories();
-      });
-  }
+    if (category.value.id) {
+        // Update category
+        CategoryService.updateCategory({ ...payload, id: category.value.id }).then(() => {
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Updated', life: 3000 });
+            categoryDialog.value = false;
+            fetchCategories();
+        });
+    } else {
+        // Create category
+        CategoryService.createCategory(payload).then(() => {
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Created', life: 3000 });
+            categoryDialog.value = false;
+            fetchCategories();
+        });
+    }
 }
 
-function editCategory(cat) {
-  // Map type to dropdown option
-  category.value = {
-    ...cat,
-    type: types.find((t) => t.value === cat.type) || null
-  };
-  categoryDialog.value = true;
+function editCategory(cat: Category) {
+    console.log('Category being edited:', cat);
+    category.value = {
+        ...cat,
+        type: types.find((t) => t.value === cat.type?.value || t.value === cat.type) || null,
+    };
+    console.log('Mapped category:', category.value);
+    categoryDialog.value = true;
 }
 
-function confirmDeleteCategory(cat) {
-  category.value = cat; // Save the category to be deleted
-  deleteCategoryDialog.value = true; // Open the confirmation dialog
+
+function confirmDeleteCategory(cat: Category) {
+    category.value = cat;
+    deleteCategoryDialog.value = true;
 }
 
-function deleteCategory(categoryId) {
-  CategoryService.deleteCategory(categoryId)
-    .then(() => {
-      toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Deleted', life: 3000 });
-      categories.value = categories.value.filter((category) => category.id !== categoryId); // Remove from UI
-      deleteCategoryDialog.value = false; // Close the confirmation dialog
-    })
-    .catch((error) => {
-      console.error('Error deleting category:', error);
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Could not delete category', life: 3000 });
-    });
+function deleteCategory(categoryId: string) {
+    CategoryService.deleteCategory(categoryId)
+        .then(() => {
+            toast.add({ severity: 'success', summary: 'Successful', detail: 'Category Deleted', life: 3000 });
+            categories.value = categories.value.filter((category) => category.id !== categoryId);
+            deleteCategoryDialog.value = false;
+        })
+        .catch((error) => {
+            console.error('Error deleting category:', error);
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Could not delete category', life: 3000 });
+        });
 }
 
 function confirmDeleteSelected() {
-  deleteCategoriesDialog.value = true;
+    deleteCategoriesDialog.value = true;
 }
 
 function deleteSelectedCategories() {
-  const ids = selectedCategories.value.map((c) => c.id);
-  CategoryService.deleteMultipleCategories(ids).then(() => {
-    categories.value = categories.value.filter((val) => !selectedCategories.value.includes(val));
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Categories Deleted', life: 3000 });
-    deleteCategoriesDialog.value = false;
-    selectedCategories.value = null;
-  });
+    const ids = selectedCategories.value?.map((c) => c.id);
+    if (!ids) return;
+
+    CategoryService.deleteMultipleCategories(ids).then(() => {
+        categories.value = categories.value.filter((val) => !selectedCategories.value?.includes(val));
+        toast.add({ severity: 'success', summary: 'Successful', detail: 'Categories Deleted', life: 3000 });
+        deleteCategoriesDialog.value = false;
+        selectedCategories.value = null;
+    });
 }
 
 function exportCSV() {
-  dt.value.exportCSV();
+    dt.value?.exportCSV();
 }
 </script>
+
 
 <template>
   <div>
