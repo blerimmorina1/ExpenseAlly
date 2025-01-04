@@ -198,19 +198,17 @@ onMounted(() => {
                     <div class="grid grid-cols-2 gap-4">
                       <div class="bg-surface-50 dark:bg-surface-800 p-3 rounded-lg">
                         <div class="text-sm text-surface-600 dark:text-surface-400">Current</div>
-                        <div class="text-lg font-bold dark:text-white">{{ item.currentAmount }} €</div>
+                        <div class="text-lg font-bold dark:text-white">{{ $formatters.formatCurrency(item.currentAmount) }}</div>
                       </div>
                       <div class="bg-surface-50 dark:bg-surface-800 p-3 rounded-lg">
                         <div class="text-sm text-surface-600 dark:text-surface-400">Target</div>
-                        <div class="text-lg font-bold dark:text-white">{{ item.targetAmount }} €</div>
+                        <div class="text-lg font-bold dark:text-white">{{ $formatters.formatCurrency(item.targetAmount) }}</div>
                       </div>
                     </div>
 
                     <div class="bg-surface-50 dark:bg-surface-800 p-3 rounded-lg">
                       <div class="text-sm text-surface-600 dark:text-surface-400">Deadline</div>
-                      <div class="text-base font-medium dark:text-white">
-                        {{ new Date(item.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('.') }}
-                      </div>
+                      <div class="text-base font-medium dark:text-white">{{ $formatters.formatDate(item.deadline) }}</div>
                     </div>
 
                     <div v-if="item.notes" class="bg-surface-50 dark:bg-surface-800 p-3 rounded-lg">
