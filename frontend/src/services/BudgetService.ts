@@ -1,4 +1,4 @@
-import api from '@/services/Api'
+import api from '@/services/ApiService'
 
 export const BudgetService = {
   getBudget: async (date) => {
@@ -50,7 +50,6 @@ export const BudgetService = {
     categoriesBudget,
   ) => {
     try {
-      debugger;
       const apiEndpoint = budgetId ? 'editBudget' : 'createBudget';
       const filteredCategoriesBudget = categoriesBudget.filter((category) => category.limit > 0);
       
@@ -69,5 +68,4 @@ export const BudgetService = {
       throw error; 
     }
   },
-  
 }

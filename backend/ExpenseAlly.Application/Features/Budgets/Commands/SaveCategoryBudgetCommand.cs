@@ -1,7 +1,5 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Application.Common.Models;
-using ExpenseAlly.Domain.Entities;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace ExpenseAlly.Application.Features.Budgets.Commands;

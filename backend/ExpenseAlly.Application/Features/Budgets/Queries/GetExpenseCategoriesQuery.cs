@@ -1,7 +1,5 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Application.Features.Budgets.Dtos;
-using ExpenseAlly.Application.Features.TransactionCategories.Dtos;
-using ExpenseAlly.Application.Features.TransactionCategories.Queries;
 
 namespace ExpenseAlly.Application.Features.Budgets.Queries;
 

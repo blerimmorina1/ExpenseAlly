@@ -59,7 +59,6 @@ const mergeCategoriesWithBudget = (categories, categoriesBudget) => {
 
 async function fetchBudgetData() {
     try {
-        debugger;
         const data = await BudgetService.getBudget(selectedMonth.value);
         categoriesBudget.value = data.budgetDetails;
         totalLimit.value = data.totalLimit;
@@ -74,7 +73,6 @@ async function fetchBudgetData() {
 
 async function fetchCategories() {
     try {
-        debugger;
         const data = await BudgetService.getCategories();
         categories.value = data.categories;
 
@@ -86,13 +84,7 @@ async function fetchCategories() {
     }
 }
 
-function formatCurrency(value) {
-    if (!value) value = 0;
-    return value.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
-}
-
 function openNew() {
-    debugger;
     categoryBudget.value = {};
     submitted.value = false;
     budgetDialog.value = true;
@@ -112,7 +104,6 @@ async function saveBudget() {
             return;
         }
 
-        debugger;
         var apiResponse = await BudgetService.saveBudget(budgetId.value, budgetName.value, selectedMonth.value, totalCategoriesLimit.value, categories.value);
 
         if (!apiResponse.data.success) {
@@ -275,33 +266,6 @@ function calculateTotalLimit() {
 
     // Watch for changes in categories to trigger total limit update
     watch(categories, calculateTotalLimit, { deep: true });
-
-// function calculateTotalLimit() {
-//     //   nextTick(() => {
-//     //     let limit = 0;
-
-//     //     if (categories.value) {
-//     //       categories.value.forEach(category => {
-//     //         limit += category.limit ? category.limit : 0;
-//     //       });
-//     //     }
-//     //     totalCategoriesLimit.value = limit;
-//     //   });
-
-// debugger;
-//         console.log(categories.value);
-//         const total = categories.value.reduce((acc, category) => {
-//             console.log(category.limit);
-
-//             return acc + (category.limit || 0);
-//         }, 0);
-
-//         // Update total limit
-//         console.log(total);
-
-//         totalCategoriesLimit.value = total;
-// }
-
 </script>
 
 <style>
@@ -345,7 +309,7 @@ function calculateTotalLimit() {
                         <div v-if="budgetId" class="text-center bg-gray-100 p-4 rounded-lg shadow-md">
                             <h4 class="text-lg font-bold text-gray-700 mb-2">Total Limit</h4>
                             <span class="text-xl font-semibold text-green-600">
-                                {{ formatCurrency(totalLimit) }}
+                                {{ $formatters.formatCurrency(totalLimit) }}
                             </span>
                         </div>
 
@@ -353,7 +317,7 @@ function calculateTotalLimit() {
                         <div v-if="budgetId" class="text-center bg-gray-100 p-4 rounded-lg shadow-md">
                             <h4 class="text-lg font-bold text-gray-700 mb-2">Total Spent</h4>
                             <span class="text-xl font-semibold text-red-600">
-                                {{ formatCurrency(totalSpent) }}
+                                {{ $formatters.formatCurrency(totalSpent) }}
                             </span>
                         </div>
                     </div>
@@ -394,13 +358,13 @@ function calculateTotalLimit() {
                 </Column>
                 <Column field="limit" header="Limit" sortable style="min-width: 8rem">
                     <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.limit) }}
+                        {{ $formatters.formatCurrency(slotProps.data.limit) }}
                     </template>
                 </Column>
 
                 <Column field="spent" header="Spent" sortable style="min-width: 8rem">
                     <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.spent) }}
+                        {{ $formatters.formatCurrency(slotProps.data.spent) }}
                     </template>
                 </Column>
                 <Column :exportable="false" header="" style="min-width: 12rem">
@@ -418,7 +382,7 @@ function calculateTotalLimit() {
                             <span v-if="calculateProgress(slotProps.data.spent, slotProps.data.limit).overspent"
                                 class="text-red-500 text-sm">
                                 Overspent the budget by
-                                {{ formatCurrency(calculateProgress(slotProps.data.spent,
+                                {{ $formatters.formatCurrency(calculateProgress(slotProps.data.spent,
                                     slotProps.data.limit).overspentAmount) }}
                             </span>
                         </div>
@@ -456,7 +420,7 @@ function calculateTotalLimit() {
                         <div class="col-span-12 flex items-center justify-between mb-2"
                             v-for="(category, index) in categories" :key="category.categoryId">
                             <span>{{ category.categoryName }}</span>
-                            <InputNumber v-model="category.limit" mode="currency" currency="EUR" locale="fr-FR"
+                            <InputNumber v-model="category.limit" mode="currency" currency="EUR" locale="de-DE"
                                 class="mr-2" placeholder="Set limit" @input="calculateTotalLimit" />
                         </div>
                     </div>
@@ -467,7 +431,7 @@ function calculateTotalLimit() {
                     <div class="col-span-6">
                         <label for="total-limit" class="block font-bold mb-3">Total Limit</label>
                         <InputNumber id="total-limit" v-model="totalCategoriesLimit" mode="currency" currency="EUR"
-                            locale="fr-FR" readonly fluid />
+                            locale="de-DE" readonly fluid />
                     </div>
                 </div>
             </div>
@@ -496,7 +460,7 @@ function calculateTotalLimit() {
             <div class="flex flex-col gap-6">
                 <div class="col-span-12 flex items-center justify-between mb-2">
                     <span>{{ categoryBudget.categoryName }}</span>
-                    <InputNumber v-model="categoryBudget.limit" mode="currency" currency="EUR" locale="fr-FR"
+                    <InputNumber v-model="categoryBudget.limit" mode="currency" currency="EUR" locale="de-DE"
                         placeholder="Set limit" />
                 </div>
             </div>

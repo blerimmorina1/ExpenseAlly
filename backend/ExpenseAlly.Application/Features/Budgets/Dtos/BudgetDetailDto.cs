@@ -1,6 +1,4 @@
-﻿using ExpenseAlly.Domain.Entities;
-
-namespace ExpenseAlly.Application.Features.Budgets.Dtos;
+﻿namespace ExpenseAlly.Application.Features.Budgets.Dtos;
 
 public class BudgetDetailDto
 {

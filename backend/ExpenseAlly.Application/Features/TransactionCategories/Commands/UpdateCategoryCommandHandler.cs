@@ -1,42 +1,35 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
-using ExpenseAlly.Domain.Entities;
-using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace ExpenseAlly.Application.Features.TransactionCategories.Commands
+namespace ExpenseAlly.Application.Features.TransactionCategories.Commands;
+
+public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Unit>
 {
-    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Unit>
+    private readonly IApplicationDbContext _context;
+
+    public UpdateCategoryCommandHandler(IApplicationDbContext context)
     {
-        private readonly IApplicationDbContext _context;
+        _context = context;
+    }
 
-        public UpdateCategoryCommandHandler(IApplicationDbContext context)
+    public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+    {
+  
+          var category = await _context.TransactionCategories
+            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+
+        
+        if (category == null)
         {
-            _context = context;
+            throw new KeyNotFoundException($"Category with ID {request.Id} not found.");
         }
 
-        public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
-        {
-      
-              var category = await _context.TransactionCategories
-                .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+        category.Name = request.Name;
+        category.Description = request.Description;
+        category.Type = request.Type;
 
-            
-            if (category == null)
-            {
-                throw new KeyNotFoundException($"Category with ID {request.Id} not found.");
-            }
+       
+        await _context.SaveChangesAsync(cancellationToken);
 
-            category.Name = request.Name;
-            category.Description = request.Description;
-            category.Type = request.Type;
-
-           
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
-        }
+        return Unit.Value;
     }
 }
