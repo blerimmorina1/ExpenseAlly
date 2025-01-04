@@ -285,7 +285,7 @@ function calculateTotalLimit() {
                     <label for="month-picker" class="font-bold block mb-2">Month</label>
                     <div class="flex items-center justify-center">
                         <!-- Left arrow button -->
-                        <button class="p-2 text-white bg-gray-300 hover:bg-gray-500 rounded-l-md"
+                        <button class="p-2 p-button-secondary rounded-l-md"
                             @click="navigateMonth(-1)">
                             &lt;
                         </button>
@@ -295,7 +295,7 @@ function calculateTotalLimit() {
                             class="w-full mx-2" change="fetchBudgetData()" />
 
                         <!-- Right arrow button -->
-                        <button class="p-2 text-white bg-gray-300 hover:bg-gray-500 rounded-r-md"
+                        <button class="p-2 p-button-secondary rounded-r-md"
                             @click="navigateMonth(1)">
                             &gt;
                         </button>
@@ -306,16 +306,16 @@ function calculateTotalLimit() {
                 <template #start>
                     <div class="flex flex-wrap gap-4 items-center justify-center">
                         <!-- Total Limit -->
-                        <div v-if="budgetId" class="text-center bg-gray-100 p-4 rounded-lg shadow-md">
-                            <h4 class="text-lg font-bold text-gray-700 mb-2">Total Limit</h4>
+                        <div v-if="budgetId" class="text-center p-button-secondary p-4 rounded-lg shadow-md">
+                            <h4 class="text-lg font-bold mb-2">Total Limit</h4>
                             <span class="text-xl font-semibold text-green-600">
                                 {{ $formatters.formatCurrency(totalLimit) }}
                             </span>
                         </div>
 
                         <!-- Total Spent -->
-                        <div v-if="budgetId" class="text-center bg-gray-100 p-4 rounded-lg shadow-md">
-                            <h4 class="text-lg font-bold text-gray-700 mb-2">Total Spent</h4>
+                        <div v-if="budgetId" class="text-center p-button-secondary p-4 rounded-lg shadow-md">
+                            <h4 class="text-lg font-bold mb-2">Total Spent</h4>
                             <span class="text-xl font-semibold text-red-600">
                                 {{ $formatters.formatCurrency(totalSpent) }}
                             </span>

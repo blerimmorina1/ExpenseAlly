@@ -52,6 +52,23 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
             };
 
             _context.Transactions.Add(transaction);
+
+            // Update the budget
+            var budget = await _context.Budgets
+                .Include(b => b.BudgetDetails)
+                .FirstOrDefaultAsync(b => b.StartDate <= request.Transaction.Date && b.EndDate >= request.Transaction.Date, cancellationToken);
+
+            if (budget != null)
+            {
+                var categoryDetail = budget.BudgetDetails.FirstOrDefault(cd => cd.CategoryId == request.Transaction.CategoryId);
+
+                if (categoryDetail != null)
+                {
+                    categoryDetail.Spent += request.Transaction.Amount;
+                    budget.TotalSpent += request.Transaction.Amount;
+                }
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return new ResponseDto
