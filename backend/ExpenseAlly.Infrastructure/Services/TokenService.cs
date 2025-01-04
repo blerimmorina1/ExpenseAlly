@@ -141,7 +141,13 @@ public class TokenService : ITokenService
             {
                 AccessToken = token,
                 RefreshToken = refreshToken.RefreshToken,
-                Expiry = user.RefreshTokenExpiryTime.Value
+                Expiry = user.RefreshTokenExpiryTime.Value, 
+                Data = new
+                {
+                    FirstName = user?.FirstName,
+                    LastName = user?.LastName,
+                    Email = user?.Email
+                }
             };
         }
         catch (Exception e)

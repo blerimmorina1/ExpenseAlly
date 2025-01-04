@@ -46,6 +46,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, TokenRe
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
                 Expiry = tokenResponse.Expiry,
+                Data = tokenResponse.Data
             };
         }
         catch (Exception ex)
