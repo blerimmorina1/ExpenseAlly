@@ -5,6 +5,7 @@ namespace ExpenseAlly.Application.Features.Budgets.Dtos;
 
 public class BudgetDto: ResponseDto
 {
+    public Guid? Id { get; set; }
     public string Name { get; set; }
     public decimal TotalLimit { get; set; }
     public decimal TotalSpent { get; set; }

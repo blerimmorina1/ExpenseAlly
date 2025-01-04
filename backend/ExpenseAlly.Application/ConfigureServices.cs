@@ -1,6 +1,7 @@
-﻿
-using ExpenseAlly.Application.Features.Account.Commands;
+﻿using ExpenseAlly.Application.Features.Account.Commands;
 using ExpenseAlly.Application.Features.Account.Validators;
+using ExpenseAlly.Application.Features.Budgets.Commands;
+using ExpenseAlly.Application.Features.Budgets.Validators;
 using ExpenseAlly.Application.Features.TransactionCategories.Commands;
 using ExpenseAlly.Application.Features.TransactionCategories.Validators;
 using ExpenseAlly.Application.Features.Transactions.Commands;
@@ -18,9 +19,12 @@ public static class ConfigureServices
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         });
 
+        // Validators
         services.AddTransient<IValidator<RegisterUserCommand>, RegisterUserCommandValidator>();
         services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
         services.AddTransient<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>();
+        services.AddTransient<IValidator<CreateBudgetCommand>, CreateBudgetCommandValidator>();
+        services.AddTransient<IValidator<EditBudgetCommand>, EditBudgetCommandValidator>();
 
         return services;
     }

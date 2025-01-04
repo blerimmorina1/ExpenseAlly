@@ -1,5 +1,4 @@
 ﻿using ExpenseAlly.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ExpenseAlly.Infrastructure.Persistence.Configurations;

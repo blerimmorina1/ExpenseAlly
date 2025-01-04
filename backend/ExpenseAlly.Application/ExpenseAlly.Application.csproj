@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Account\Queries\" />
-    <Folder Include="Features\Budgets\Validators\" />
     <Folder Include="Features\TransactionCategories\Commands\" />
     <Folder Include="Features\TransactionCategories\Dtos\" />
     <Folder Include="Features\TransactionCategories\Queries\" />
