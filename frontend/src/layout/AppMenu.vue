@@ -33,13 +33,18 @@ const model = ref([
             },
           {
                 label: 'Categories',
-                icon: 'pi pi-fw pi-bars',
+                icon: 'pi pi-fw pi-receipt',
                 to: '/categories'
             },
             {
                 label: 'Transactions',
-                icon: 'pi pi-fw pi-bars',
+                icon: 'pi pi-fw pi-dollar',
                 to: '/transactions'
+            },
+            {
+                label: 'Saving Goals',
+                icon: 'pi pi-fw pi-bullseye',
+                to: '/saving-goals'
             },
             // {
             //     label: 'Landing',

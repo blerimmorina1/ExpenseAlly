@@ -108,6 +108,11 @@ const routes: RouteRecordRaw[] = [
         name: 'Transactions',
         component: () => import('@/views/pages/TransactionsView.vue'),
       },
+      {
+        path: '/saving-goals',
+        name: 'Saving Goals',
+        component: () => import('@/views/pages/SavingGoalsView.vue'),
+      },
     ]
   },
   {

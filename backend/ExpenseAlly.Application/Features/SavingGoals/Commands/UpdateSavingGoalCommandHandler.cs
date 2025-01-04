@@ -23,7 +23,6 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
 
     public async Task<ResponseDto> Handle(UpdateSavingGoalCommand request, CancellationToken cancellationToken)
     {
-        // Validate the request
         var validationResult = await _validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
         {
@@ -39,7 +38,6 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
 
         try
         {
-            // Fetch the existing saving goal
             var savingGoal = await _context.SavingGoals.FirstOrDefaultAsync(g => g.Id == request.Id, cancellationToken);
 
             if (savingGoal == null)
@@ -48,12 +46,15 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
                 {
                     Errors = new List<ErrorDto>
                     {
-                        new ErrorDto { Code = "NotFound", Message = "Saving goal not found." }
+                        new ErrorDto
+                        {
+                            Code = "NotFound", 
+                            Message = "Saving goal not found."
+                        }
                     }
                 };
             }
-
-            // Update properties
+            
             savingGoal.Name = request.Name;
             savingGoal.TargetAmount = request.TargetAmount;
             savingGoal.CurrentAmount = request.CurrentAmount;
@@ -64,7 +65,20 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
             _context.SavingGoals.Update(savingGoal);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new ResponseDto { Success = true };
+            return new ResponseDto
+            {
+                Success = true,
+                Data = new
+                {
+                    savingGoal.Id,
+                    savingGoal.Name,
+                    savingGoal.TargetAmount,
+                    savingGoal.CurrentAmount,
+                    savingGoal.Deadline,
+                    savingGoal.IsCompleted,
+                    savingGoal.Notes
+                }
+            };
         }
         catch (Exception ex)
         {
@@ -73,7 +87,11 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
             {
                 Errors = new List<ErrorDto>
                 {
-                    new ErrorDto { Code = "InternalServerError", Message = "Error occurred while updating the saving goal." }
+                    new ErrorDto
+                    {
+                        Code = "InternalServerError", 
+                        Message = "Error occurred while updating the saving goal."
+                    }
                 }
             };
         }

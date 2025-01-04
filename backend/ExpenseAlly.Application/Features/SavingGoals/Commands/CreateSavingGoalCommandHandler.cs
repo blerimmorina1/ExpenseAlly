@@ -27,7 +27,6 @@ namespace ExpenseAlly.Application.Features.SavingGoals.Commands
 
         public async Task<ResponseDto> Handle(CreateSavingGoalCommand request, CancellationToken cancellationToken)
         {
-            // Validate the command
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
@@ -44,7 +43,6 @@ namespace ExpenseAlly.Application.Features.SavingGoals.Commands
 
             try
             {
-                // Create a new SavingGoal entity
                 var savingGoal = new SavingGoal
                 {
                     Name = request.Name,
@@ -54,14 +52,23 @@ namespace ExpenseAlly.Application.Features.SavingGoals.Commands
                     IsCompleted = request.IsCompleted,
                     Notes = request.Notes
                 };
-
-                // Add SavingGoal to the database
+                
                 _context.SavingGoals.Add(savingGoal);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return new ResponseDto
                 {
-                    Success = true
+                    Success = true,
+                    Data = new
+                    {
+                        savingGoal.Id,
+                        savingGoal.Name,
+                        savingGoal.TargetAmount,
+                        savingGoal.CurrentAmount,
+                        savingGoal.Deadline,
+                        savingGoal.IsCompleted,
+                        savingGoal.Notes
+                    }
                 };
             }
             catch (Exception ex)

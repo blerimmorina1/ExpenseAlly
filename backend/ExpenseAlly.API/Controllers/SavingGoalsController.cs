@@ -25,8 +25,8 @@ namespace ExpenseAlly.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<SavingGoalDto>>> GetSavingGoals([FromQuery] GetSavingGoalQuery query)
         {
-            var savingGoals = await _mediator.Send(query);
-            return Ok(savingGoals);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
         
         [HttpPut("{id}")]
@@ -34,16 +34,17 @@ namespace ExpenseAlly.API.Controllers
         {
             if (id != command.Id)
             {
-                return BadRequest("Mismatched Saving Goal ID.");
+                return BadRequest(new { Message = "Mismatched Saving Goal ID." });
             }
 
             var result = await _mediator.Send(command);
+
             if (!result.Success)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(result);
             }
 
-            return NoContent();
+            return Ok(result);
         }
         
         [HttpDelete("{id}")]
@@ -53,12 +54,11 @@ namespace ExpenseAlly.API.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(result);
             }
 
-            return NoContent();
+            return Ok(result);
         }
-        
         
     }
 }

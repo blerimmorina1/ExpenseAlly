@@ -27,7 +27,11 @@ public class DeleteSavingGoalCommandHandler : IRequestHandler<DeleteSavingGoalCo
                 {
                     Errors = new List<ErrorDto>
                     {
-                        new ErrorDto { Code = "NotFound", Message = "Saving goal not found." }
+                        new ErrorDto 
+                            { 
+                                Code = "NotFound", 
+                                Message = "Saving goal not found." 
+                            }
                     }
                 };
             }
@@ -44,7 +48,11 @@ public class DeleteSavingGoalCommandHandler : IRequestHandler<DeleteSavingGoalCo
             {
                 Errors = new List<ErrorDto>
                 {
-                    new ErrorDto { Code = "InternalServerError", Message = "Error occurred while deleting the saving goal." }
+                    new ErrorDto
+                    {
+                        Code = "InternalServerError", 
+                        Message = "Error occurred while deleting the saving goal."
+                    }
                 }
             };
         }
