@@ -1,6 +1,8 @@
 ﻿
 using ExpenseAlly.Application.Features.Account.Commands;
 using ExpenseAlly.Application.Features.Account.Validators;
+using ExpenseAlly.Application.Features.SavingGoals.Commands;
+using ExpenseAlly.Application.Features.SavingGoals.Validators;
 using FluentValidation;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -15,7 +17,9 @@ public static class ConfigureServices
         });
 
        services.AddTransient<IValidator<RegisterUserCommand>, RegisterUserCommandValidator>();
-
-        return services;
+       services.AddTransient<IValidator<CreateSavingGoalCommand>, CreateSavingGoalValidator>();
+       services.AddTransient<IValidator<UpdateSavingGoalCommand>, UpdateSavingGoalValidator>();
+       
+       return services;
     }
 }
