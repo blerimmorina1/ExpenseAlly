@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
+import { formatters } from './utils/formatters';
 
 import Aura from '@primevue/themes/aura';
 import PrimeVue from 'primevue/config';
@@ -14,6 +15,7 @@ import '@/assets/tailwind.css';
 const app = createApp(App);
 const pinia = createPinia();
 
+app.config.globalProperties.$formatters = formatters;
 app.use(router);
 app.use(pinia);
 app.use(PrimeVue, {
