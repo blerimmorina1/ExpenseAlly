@@ -2,14 +2,10 @@
 using ExpenseAlly.Application.Features.Transactions.Dtos;
 using ExpenseAlly.Application.Features.Transactions.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseAlly.API.Controllers
 {
-    [AllowAnonymous]
     public class TransactionsController : ApiControllerBase
     {
         private readonly IMediator _mediator;

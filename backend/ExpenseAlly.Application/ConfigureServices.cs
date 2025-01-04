@@ -1,8 +1,13 @@
-﻿
-using ExpenseAlly.Application.Features.Account.Commands;
+﻿using ExpenseAlly.Application.Features.Account.Commands;
 using ExpenseAlly.Application.Features.Account.Validators;
 using ExpenseAlly.Application.Features.SavingGoals.Commands;
 using ExpenseAlly.Application.Features.SavingGoals.Validators;
+using ExpenseAlly.Application.Features.Budgets.Commands;
+using ExpenseAlly.Application.Features.Budgets.Validators;
+using ExpenseAlly.Application.Features.TransactionCategories.Commands;
+using ExpenseAlly.Application.Features.TransactionCategories.Validators;
+using ExpenseAlly.Application.Features.Transactions.Commands;
+using ExpenseAlly.Application.Features.Transactions.Validators;
 using FluentValidation;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -16,10 +21,14 @@ public static class ConfigureServices
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         });
 
-       services.AddTransient<IValidator<RegisterUserCommand>, RegisterUserCommandValidator>();
-       services.AddTransient<IValidator<CreateSavingGoalCommand>, CreateSavingGoalValidator>();
-       services.AddTransient<IValidator<UpdateSavingGoalCommand>, UpdateSavingGoalValidator>();
-       
-       return services;
+        // Validators
+        services.AddTransient<IValidator<RegisterUserCommand>, RegisterUserCommandValidator>();
+        services.AddTransient<IValidator<CreateTransactionCommand>, CreateTransactionCommandValidator>();
+        services.AddTransient<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>();
+        services.AddTransient<IValidator<CreateBudgetCommand>, CreateBudgetCommandValidator>();
+        services.AddTransient<IValidator<EditBudgetCommand>, EditBudgetCommandValidator>();
+        services.AddTransient<IValidator<CreateSavingGoalCommand>, CreateSavingGoalValidator>();
+        services.AddTransient<IValidator<UpdateSavingGoalCommand>, UpdateSavingGoalValidator>();
+        return services;
     }
 }

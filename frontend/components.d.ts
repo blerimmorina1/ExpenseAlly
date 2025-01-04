@@ -11,13 +11,12 @@ declare module 'vue' {
     Avatar: typeof import('primevue/avatar')['default']
     BestSellingWidget: typeof import('./src/components/dashboard/BestSellingWidget.vue')['default']
     Button: typeof import('primevue/button')['default']
-    Card: typeof import('primevue/card')['default']
+    Calendar: typeof import('primevue/calendar')['default']
     CategoryList: typeof import('./src/components/TransactionCategory/CategoryList.vue')['default']
     Chart: typeof import('primevue/chart')['default']
     Checkbox: typeof import('primevue/checkbox')['default']
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
-    DataView: typeof import('primevue/dataview')['default']
     DatePicker: typeof import('primevue/datepicker')['default']
     Dialog: typeof import('primevue/dialog')['default']
     Dropdown: typeof import('primevue/dropdown')['default']
@@ -27,6 +26,8 @@ declare module 'vue' {
     FooterWidget: typeof import('./src/components/landing/FooterWidget.vue')['default']
     HeroWidget: typeof import('./src/components/landing/HeroWidget.vue')['default']
     HighlightsWidget: typeof import('./src/components/landing/HighlightsWidget.vue')['default']
+    IconField: typeof import('primevue/iconfield')['default']
+    InputIcon: typeof import('primevue/inputicon')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
@@ -36,6 +37,9 @@ declare module 'vue' {
     Password: typeof import('primevue/password')['default']
     PickList: typeof import('primevue/picklist')['default']
     PricingWidget: typeof import('./src/components/landing/PricingWidget.vue')['default']
+    ProgressBar: typeof import('primevue/progressbar')['default']
+    RadioButton: typeof import('primevue/radiobutton')['default']
+    Rating: typeof import('primevue/rating')['default']
     RecentSalesWidget: typeof import('./src/components/dashboard/RecentSalesWidget.vue')['default']
     RevenueStreamWidget: typeof import('./src/components/dashboard/RevenueStreamWidget.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -51,5 +55,6 @@ declare module 'vue' {
   }
   export interface ComponentCustomProperties {
     StyleClass: typeof import('primevue/styleclass')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }

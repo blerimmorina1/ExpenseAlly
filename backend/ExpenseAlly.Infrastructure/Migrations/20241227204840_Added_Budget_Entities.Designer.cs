@@ -4,6 +4,7 @@ using ExpenseAlly.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseAlly.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241227204840_Added_Budget_Entities")]
+    partial class Added_Budget_Entities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,60 +24,6 @@ namespace ExpenseAlly.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ExpenseAlly.Domain.Entities.SavingGoal", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<Guid?>("CreatedBy")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<DateTime>("CreatedOn")
-                    .HasColumnType("datetime2");
-
-                b.Property<decimal>("CurrentAmount")
-                    .ValueGeneratedOnAdd()
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)")
-                    .HasDefaultValue(0m);
-
-                b.Property<DateTime?>("Deadline")
-                    .HasColumnType("datetime2");
-
-                b.Property<bool>("IsCompleted")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("bit")
-                    .HasDefaultValue(false);
-
-                b.Property<Guid?>("LastModifiedBy")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<DateTime?>("LastModifiedOn")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
-
-                b.Property<string>("Notes")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
-
-                b.Property<decimal>("TargetAmount")
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)");
-
-                b.HasKey("Id")
-                    .HasName("PK_SavingGoals_Id");
-
-                b.ToTable("SavingGoals", null, t =>
-                {
-                    t.HasComment("This entity is used to store all the saving goals of users.");
-                });
-            });
 
             modelBuilder.Entity("ExpenseAlly.Domain.Entities.Budget", b =>
                 {

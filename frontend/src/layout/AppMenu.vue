@@ -46,6 +46,11 @@ const model = ref([
                 icon: 'pi pi-fw pi-bullseye',
                 to: '/saving-goals'
             },
+            {
+                label: 'Budgets',
+                icon: 'pi pi-fw pi-wallet',
+                to: '/budgets'
+            },
             // {
             //     label: 'Landing',
             //     icon: 'pi pi-fw pi-globe',
