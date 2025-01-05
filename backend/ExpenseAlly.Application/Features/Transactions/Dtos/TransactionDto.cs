@@ -1,4 +1,5 @@
-﻿using ExpenseAlly.Domain.Enums;
+﻿using ExpenseAlly.Application.Features.TransactionCategories.Dtos;
+using ExpenseAlly.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ExpenseAlly.Application.Features.Transactions.Dtos
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string? Notes { get; set; }
-        public string CategoryName { get; set; }
+        public TransactionCategoryDto Category { get; set; }
         public TransactionType CategoryType { get; set; }
     }
 }
