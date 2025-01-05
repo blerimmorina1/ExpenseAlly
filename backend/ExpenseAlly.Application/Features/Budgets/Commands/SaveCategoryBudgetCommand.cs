@@ -1,5 +1,6 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Application.Common.Models;
+using ExpenseAlly.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace ExpenseAlly.Application.Features.Budgets.Commands;
@@ -14,18 +15,20 @@ public class SaveCategoryBudgetCommandHandler : IRequestHandler<SaveCategoryBudg
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<SaveCategoryBudgetCommandHandler> _logger;
+    private readonly INotificationService _notificationService;
 
-    public SaveCategoryBudgetCommandHandler(IApplicationDbContext context, ILogger<SaveCategoryBudgetCommandHandler> logger)
+    public SaveCategoryBudgetCommandHandler(IApplicationDbContext context, ILogger<SaveCategoryBudgetCommandHandler> logger, INotificationService notificationService)
     {
         _context = context;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseDto> Handle(SaveCategoryBudgetCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var budgetDetail = await _context.BudgetDetails
+            var budgetDetail = await _context.BudgetDetails.Include(x=> x.Category)
                 .FirstOrDefaultAsync(b => b.Id == request.Id, cancellationToken);
 
             if (budgetDetail == null)
@@ -53,6 +56,13 @@ public class SaveCategoryBudgetCommandHandler : IRequestHandler<SaveCategoryBudg
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (budget != null)
+            {
+                //await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
+
+                await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, budgetDetail, cancellationToken);
+            }
 
             return new ResponseDto
             {
