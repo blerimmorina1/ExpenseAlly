@@ -28,6 +28,7 @@ const handleLogin = async () => {
       authStore.setRefreshToken(response.data.refreshToken);
 
       if (response.data.success) {
+          localStorage.setItem('user', JSON.stringify(response.data.data));
           router.push('/');
       } else {
           toast.add({ severity: 'error', summary: 'Error', detail: response?.data?.errors[0].message || 'Login failed', life: 3000 });
