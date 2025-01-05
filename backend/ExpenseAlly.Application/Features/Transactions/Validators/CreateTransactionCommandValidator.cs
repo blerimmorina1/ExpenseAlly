@@ -24,14 +24,14 @@ public class CreateTransactionCommandValidator : AbstractValidator<CreateTransac
             })
             .WithName("CategoryId")
             .WithMessage("Invalid Transaction Category. Please select a valid category.");
-        RuleFor(x => x)
-          .MustAsync(async (request, cancellationToken) =>
-          {
-              var category = await _context.TransactionCategories
-                .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
+        //RuleFor(x => x)
+        //  .MustAsync(async (request, cancellationToken) =>
+        //  {
+        //      var category = await _context.TransactionCategories
+        //        .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
 
-              return category != null && category.Type == request.Transaction.Type;
-          })
-          .WithMessage("Transaction type must match the category type.");
+        //      return category != null && category.Type == request.Transaction.Type;
+        //  })
+        //  .WithMessage("Transaction type must match the category type.");
     }
 }
