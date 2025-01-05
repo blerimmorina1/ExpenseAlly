@@ -35,6 +35,7 @@ declare module 'vue' {
     PricingWidget: typeof import('./src/components/landing/PricingWidget.vue')['default']
     ProgressBar: typeof import('primevue/progressbar')['default']
     RecentSalesWidget: typeof import('./src/components/dashboard/RecentSalesWidget.vue')['default']
+    RecentTransactionsWidget: typeof import('./src/components/dashboard/RecentTransactionsWidget.vue')['default']
     RevenueStreamWidget: typeof import('./src/components/dashboard/RevenueStreamWidget.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

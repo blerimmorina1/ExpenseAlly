@@ -9,7 +9,7 @@ const selectedMonth = ref(new Date(new Date().getFullYear(), new Date().getMonth
 const toast = useToast();
 const dt = ref();
 const categoriesBudget = ref();
-const categories = ref();
+const categories = ref([]);
 const totalLimit = ref();
 const totalSpent = ref();
 const budgetId = ref();
@@ -256,23 +256,17 @@ function navigateMonth(direction) {
     fetchBudgetData(this.selectedMonth.value);
 }
 
+watch(categories, calculateTotalLimit, {
+  deep: true,
+  immediate: true
+});
+
 function calculateTotalLimit() {
-      let total = 0;
-      categories.value.forEach(category => {
-        total += category.limit || 0;
-      });
-      totalCategoriesLimit.value = total;
-    }
-
-    // Watch for changes in categories to trigger total limit update
-    watch(categories, calculateTotalLimit, { deep: true });
-</script>
-
-<style>
-.p-progressbar-danger .p-progressbar-value {
-    background-color: red !important;
+  totalCategoriesLimit.value = categories.value.reduce((total, category) =>
+    total + (category.limit || 0), 0
+  );
 }
-</style>
+</script>
 
 <template>
     <div>
@@ -325,13 +319,11 @@ function calculateTotalLimit() {
 
                 <template #end>
                     <!-- New/Edit Button -->
-                    <Button :label="budgetId ? 'Edit' : 'New'" :icon="budgetId ? 'pi pi-pencil' : 'pi pi-plus'"
-                        severity="secondary" class="mr-2" @click="openNew()" />
+                    <Button :label="budgetId ? 'Edit' : 'New'" :icon="budgetId ? 'pi pi-pencil' : 'pi pi-plus'" severity="secondary" class="mr-2" @click="openNew()" />
                     <!-- Export Button -->
                     <div v-if="budgetId">
                         <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
-                        <Button icon="pi pi-trash" class="ml-1" outlined rounded severity="danger"
-                            @click="confirmDeleteBudget()" />
+                        <Button icon="pi pi-trash" class="ml-1" outlined rounded severity="danger" @click="confirmDeleteBudget()" />
                     </div>
                 </template>
             </Toolbar>
@@ -392,10 +384,8 @@ function calculateTotalLimit() {
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
-                        <Button icon="pi pi-eye" outlined rounded severity="info" class="mr-2"
-                            @click="viewTransactions(slotProps.data)" v-tooltip="'View Transactions'" />
-                        <Button icon="pi pi-pencil" outlined rounded class="mr-2"
-                            @click="editCategoryBudget(slotProps.data)" v-tooltip="'Edit Budget'" />
+                        <Button icon="pi pi-eye" outlined rounded severity="info" class="mr-2" @click="viewTransactions(slotProps.data)" v-tooltip="'View Transactions'" />
+                        <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editCategoryBudget(slotProps.data)" v-tooltip="'Edit Budget'" />
                     </template>
                 </Column>
 
@@ -420,8 +410,7 @@ function calculateTotalLimit() {
                         <div class="col-span-12 flex items-center justify-between mb-2"
                             v-for="(category, index) in categories" :key="category.categoryId">
                             <span>{{ category.categoryName }}</span>
-                            <InputNumber v-model="category.limit" mode="currency" currency="EUR" locale="de-DE"
-                                class="mr-2" placeholder="Set limit" @input="calculateTotalLimit" />
+                            <InputNumber v-model="category.limit" mode="currency" currency="EUR" locale="de-DE" class="mr-2" placeholder="Set limit" />
                         </div>
                     </div>
                 </div>
@@ -471,3 +460,9 @@ function calculateTotalLimit() {
         </Dialog>
     </div>
 </template>
+
+<style>
+.p-progressbar-danger .p-progressbar-value {
+  background-color: red !important;
+}
+</style>
