@@ -1,5 +1,8 @@
 ﻿using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Application.Features.Transactions.Dtos;
+using ExpenseAlly.Application.Features.TransactionCategories.Dtos;
+using Microsoft.EntityFrameworkCore;
+using ExpenseAlly.Domain.Enums;
 
 namespace ExpenseAlly.Application.Features.Transactions.Queries;
 
@@ -24,8 +27,17 @@ public class GetTransactionsQueryHandler : IRequestHandler<GetTransactionsQuery,
                 Amount = x.Amount,
                 Date = x.Date,
                 Notes = x.Notes,
-                CategoryName = x.Category.Name,
-                CategoryType = x.Category.Type
+                // Map Category to TransactionCategoryDto, handle null case
+                Category = x.Category != null
+                    ? new TransactionCategoryDto
+                    {
+                        Id = x.Category.Id,
+                        Name = x.Category.Name,
+                        Description = x.Category.Description,
+                        Type = x.Category.Type.ToString() // Convert enum to string for TransactionCategoryDto
+                    }
+                    : null, // Null if no category is associated
+                CategoryType = x.Category != null ? x.Category.Type : default(TransactionType) // Assign default value if null
             })
             .ToListAsync(cancellationToken);
     }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { TransactionService } from '@/services/TransactionsService';
 import { CategoryService } from '@/services/CategoryService';
 
 // Data references
-const transactions = ref([]);
-const categories = ref([]);
+const transactions = ref([]); // Transactions with enriched categoryName
+const categories = ref([]); // Categories for dropdown
 const transactionDialog = ref(false);
 const transaction = ref({
     categoryId: '',
@@ -24,12 +24,41 @@ const typeOptions = [
 // Fetch transactions and categories on mount
 onMounted(async () => {
     try {
-        transactions.value = await TransactionService.getTransactions();
-        categories.value = await CategoryService.getCategories(); // Fetch categories
+        // Fetch categories
+        const fetchedCategories = await CategoryService.getCategories();
+        categories.value = fetchedCategories.map(category => ({
+            id: category.id,
+            name: category.name,
+        }));
+
+        console.log('Fetched Categories:', categories.value);
+
+        // Fetch transactions
+        await fetchTransactions();
     } catch (error) {
+        console.error('Error fetching data:', error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data', life: 3000 });
     }
 });
+
+async function fetchTransactions() {
+    try {
+        const fetchedTransactions = await TransactionService.getTransactions();
+        transactions.value = fetchedTransactions.map(transaction => ({
+            id: transaction.id,
+            amount: transaction.amount, // Map amount correctly
+            date: transaction.date, // Pass date as it is
+            notes: transaction.notes, // Map notes correctly
+            type: transaction.type,
+            categoryName: transaction.category?.name || 'Unknown', // Map category name
+        }));
+        console.log('Fetched Transactions:', transactions.value);
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    }
+}
+
+
 
 // Open the dialog for creating a new transaction
 function openNew() {
@@ -48,7 +77,6 @@ function hideDialog() {
     transactionDialog.value = false;
 }
 
-// Save the transaction
 async function saveTransaction() {
     const payload = {
         Transaction: {
@@ -60,21 +88,26 @@ async function saveTransaction() {
         },
     };
 
-    console.log('Payload:', payload);
-
     try {
         const response = await TransactionService.createTransaction(payload);
-        transactions.value.push(response);
+
+        // Map all fields properly
+        const category = categories.value.find(cat => cat.id === transaction.value.categoryId);
+        const newTransaction = {
+            id: response.id,
+            amount: response.amount,
+            date: response.date, // Ensure this is in ISO format
+            notes: response.notes,
+            type: response.type,
+            categoryName: category?.name || 'Unknown',
+        };
+
+        transactions.value = [newTransaction, ...transactions.value];
+
         toast.add({ severity: 'success', summary: 'Success', detail: 'Transaction created', life: 3000 });
         transactionDialog.value = false;
     } catch (error) {
         console.error('Error creating transaction:', error.response?.data || error.message);
-
-        // Log validation errors if present
-        if (error.response?.data?.errors) {
-            console.error('Validation Errors:', error.response.data.errors);
-        }
-
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -85,99 +118,105 @@ async function saveTransaction() {
 }
 
 
+// Add this ref for pagination
+const firstRowIndex = ref(0); // Default to the first page
 
-// Helper function to get the category name by ID
-function getCategoryName(categoryId: string): string {
-    const category = categories.value.find((cat: any) => cat.id === categoryId);
-    return category ? category.name : 'Unknown';
+function resetPagination() {
+    firstRowIndex.value = 0; // Reset to the first page
 }
+
 </script>
 
 <template>
-    <div>
-        <div class="card">
-            <Toolbar class="mb-4">
-                <template #start>
-                    <Button label="New Transaction" icon="pi pi-plus" @click="openNew" />
-                </template>
-            </Toolbar>
+  <div>
+      <div class="card">
+          <Toolbar class="mb-4">
+              <template #start>
+                  <Button label="New Transaction" icon="pi pi-plus" @click="openNew" />
+              </template>
+          </Toolbar>
 
-            <DataTable :value="transactions" :paginator="true" :rows="10">
-                <Column field="categoryId" header="Category" sortable>
-                    <template #body="slotProps">
-                        {{ getCategoryName(slotProps.data.categoryId) }}
-                    </template>
-                </Column>
-                <Column field="type" header="Type" sortable>
-                    <template #body="slotProps">
-                        {{ slotProps.data.type === 1 ? 'Income' : 'Expense' }}
-                    </template>
-                </Column>
-                <Column field="amount" header="Amount" sortable></Column>
-                <Column field="date" header="Date" sortable></Column>
-                <Column field="notes" header="Notes" sortable></Column>
-            </DataTable>
-        </div>
+          <DataTable :value="transactions" :paginator="true" :rows="10" :first="firstRowIndex" @update:page="resetPagination">
+    <Column field="categoryName" header="Category" sortable></Column>
+    <Column field="type" header="Type" sortable>
+        <template #body="slotProps">
+            {{ slotProps.data.type === 1 ? 'Income' : 'Expense' }}
+        </template>
+    </Column>
+    <Column field="amount" header="Amount" sortable></Column>
+    <Column field="date" header="Date" sortable>
+        <template #body="slotProps">
+            {{ slotProps.data.date ? new Date(slotProps.data.date).toLocaleDateString() : 'Invalid Date' }}
+        </template>
+    </Column>
+    <Column field="notes" header="Notes" sortable></Column>
+</DataTable>
 
-        <Dialog v-model:visible="transactionDialog" header="Transaction Details" :modal="true" style="width: 400px">
-            <div>
-                <div class="field">
-                    <label for="categoryId" class="block">Category</label>
-                    <Dropdown
-                        id="categoryId"
-                        v-model="transaction.categoryId"
-                        :options="categories"
-                        optionLabel="name"
-                        optionValue="id"
-                        placeholder="Select a Category"
-                    />
-                </div>
 
-                <div class="field">
-                    <label for="type" class="block">Type</label>
-                    <Dropdown
-                        id="type"
-                        v-model="transaction.type"
-                        :options="typeOptions"
-                        optionLabel="label"
-                        optionValue="value"
-                        placeholder="Select a Type"
-                    />
-                </div>
 
-                <div class="field">
-                    <label for="amount" class="block">Amount</label>
-                    <InputNumber
-                        id="amount"
-                        v-model="transaction.amount"
-                        mode="currency"
-                        currency="USD"
-                        locale="en-US"
-                    />
-                </div>
+      </div>
 
-                <div class="field">
-                    <label for="date" class="block">Date</label>
-                    <InputText
-                        id="date"
-                        type="date"
-                        v-model="transaction.date"
-                    />
-                </div>
+      <Dialog v-model:visible="transactionDialog" header="Transaction Details" :modal="true" style="width: 400px">
+          <div>
+              <div class="field">
+                  <label for="categoryId" class="block">Category</label>
+                  <Dropdown
+                      id="categoryId"
+                      v-model="transaction.categoryId"
+                      :options="categories"
+                      optionLabel="name"
+                      optionValue="id"
+                      placeholder="Select a Category"
+                  />
+              </div>
 
-                <div class="field">
-                    <label for="notes" class="block">Notes</label>
-                    <Textarea id="notes" v-model="transaction.notes" rows="3" cols="20" />
-                </div>
-            </div>
+              <div class="field">
+                  <label for="type" class="block">Type</label>
+                  <Dropdown
+                      id="type"
+                      v-model="transaction.type"
+                      :options="typeOptions"
+                      optionLabel="label"
+                      optionValue="value"
+                      placeholder="Select a Type"
+                  />
+              </div>
 
-            <template #footer>
-                <Button label="Cancel" icon="pi pi-times" @click="hideDialog" class="p-button-text" />
-                <Button label="Save" icon="pi pi-check" @click="saveTransaction" />
-            </template>
-        </Dialog>
-    </div>
+              <div class="field">
+                  <label for="amount" class="block">Amount</label>
+                  <InputNumber
+                      id="amount"
+                      v-model="transaction.amount"
+                      mode="currency"
+                      currency="USD"
+                      locale="en-US"
+                  />
+              </div>
+
+              <div class="field">
+                  <label for="date" class="block">Date</label>
+                  <InputText
+                      id="date"
+                      type="date"
+                      v-model="transaction.date"
+                  />
+              </div>
+
+              <div class="field">
+                  <label for="notes" class="block">Notes</label>
+                  <Textarea id="notes" v-model="transaction.notes" rows="3" cols="20" />
+              </div>
+          </div>
+
+          <template #footer>
+              <Button label="Cancel" icon="pi pi-times" @click="hideDialog" class="p-button-text" />
+              <Button label="Save" icon="pi pi-check" @click="saveTransaction" />
+          </template>
+      </Dialog>
+  </div>
 </template>
+
+
 
 <style>
 .field {
