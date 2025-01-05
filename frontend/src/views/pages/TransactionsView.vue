@@ -4,15 +4,14 @@ import { useToast } from 'primevue/usetoast';
 import { TransactionService } from '@/services/TransactionsService';
 import { CategoryService } from '@/services/CategoryService';
 
-// Data references
-const transactions = ref([]); // Transactions with enriched categoryName
-const categories = ref([]); // Categories for dropdown
+const transactions = ref([]);
+const categories = ref([]);
 const transactionDialog = ref(false);
 const transaction = ref({
     categoryId: '',
     type: null,
     amount: 0,
-    date: new Date().toISOString().split('T')[0], // Default to current date
+    date: new Date().toISOString().split('T')[0],
     notes: '',
 });
 const toast = useToast();
@@ -21,10 +20,9 @@ const typeOptions = [
     { label: 'Expense', value: 2 },
 ];
 
-// Fetch transactions and categories on mount
 onMounted(async () => {
     try {
-        // Fetch categories
+
         const fetchedCategories = await CategoryService.getCategories();
         categories.value = fetchedCategories.map(category => ({
             id: category.id,
@@ -33,7 +31,6 @@ onMounted(async () => {
 
         console.log('Fetched Categories:', categories.value);
 
-        // Fetch transactions
         await fetchTransactions();
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -46,21 +43,19 @@ async function fetchTransactions() {
         const fetchedTransactions = await TransactionService.getTransactions();
         transactions.value = fetchedTransactions.map(transaction => ({
             id: transaction.id,
-            amount: transaction.amount, // Map amount correctly
-            date: transaction.date, // Pass date as it is
-            notes: transaction.notes, // Map notes correctly
+            amount: transaction.amount || 0,
+            date: transaction.date || null,
+            notes: transaction.notes || '',
             type: transaction.type,
-            categoryName: transaction.category?.name || 'Unknown', // Map category name
+            categoryName: transaction.category?.name || 'Unknown',
         }));
         console.log('Fetched Transactions:', transactions.value);
     } catch (error) {
         console.error('Error fetching transactions:', error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load transactions', life: 3000 });
     }
 }
 
-
-
-// Open the dialog for creating a new transaction
 function openNew() {
     transaction.value = {
         categoryId: '',
@@ -72,39 +67,34 @@ function openNew() {
     transactionDialog.value = true;
 }
 
-// Close the dialog
 function hideDialog() {
     transactionDialog.value = false;
 }
 
 async function saveTransaction() {
+    if (!transaction.value.categoryId || !transaction.value.type || transaction.value.amount <= 0) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Please fill all required fields', life: 3000 });
+        return;
+    }
+
     const payload = {
         Transaction: {
             CategoryId: transaction.value.categoryId,
             Type: transaction.value.type,
             Amount: transaction.value.amount,
             Date: transaction.value.date ? new Date(transaction.value.date).toISOString() : null,
-            Notes: transaction.value.notes || null,
+            Notes: transaction.value.notes?.trim() || null,
         },
     };
 
     try {
-        const response = await TransactionService.createTransaction(payload);
+        await TransactionService.createTransaction(payload);
 
-        // Map all fields properly
-        const category = categories.value.find(cat => cat.id === transaction.value.categoryId);
-        const newTransaction = {
-            id: response.id,
-            amount: response.amount,
-            date: response.date, // Ensure this is in ISO format
-            notes: response.notes,
-            type: response.type,
-            categoryName: category?.name || 'Unknown',
-        };
+        await fetchTransactions();
 
-        transactions.value = [newTransaction, ...transactions.value];
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Transaction created and fetched', life: 3000 });
 
-        toast.add({ severity: 'success', summary: 'Success', detail: 'Transaction created', life: 3000 });
+
         transactionDialog.value = false;
     } catch (error) {
         console.error('Error creating transaction:', error.response?.data || error.message);
@@ -117,14 +107,11 @@ async function saveTransaction() {
     }
 }
 
+const firstRowIndex = ref(0);
 
-// Add this ref for pagination
-const firstRowIndex = ref(0); // Default to the first page
-
-function resetPagination() {
-    firstRowIndex.value = 0; // Reset to the first page
+function resetPagination(event) {
+    firstRowIndex.value = event.first;
 }
-
 </script>
 
 <template>
@@ -137,23 +124,20 @@ function resetPagination() {
           </Toolbar>
 
           <DataTable :value="transactions" :paginator="true" :rows="10" :first="firstRowIndex" @update:page="resetPagination">
-    <Column field="categoryName" header="Category" sortable></Column>
-    <Column field="type" header="Type" sortable>
-        <template #body="slotProps">
-            {{ slotProps.data.type === 1 ? 'Income' : 'Expense' }}
-        </template>
-    </Column>
-    <Column field="amount" header="Amount" sortable></Column>
-    <Column field="date" header="Date" sortable>
-        <template #body="slotProps">
-            {{ slotProps.data.date ? new Date(slotProps.data.date).toLocaleDateString() : 'Invalid Date' }}
-        </template>
-    </Column>
-    <Column field="notes" header="Notes" sortable></Column>
-</DataTable>
-
-
-
+              <Column field="categoryName" header="Category" sortable></Column>
+              <Column field="type" header="Type" sortable>
+                  <template #body="slotProps">
+                      {{ slotProps.data.type === 1 ? 'Income' : 'Expense' }}
+                  </template>
+              </Column>
+              <Column field="amount" header="Amount" sortable></Column>
+              <Column field="date" header="Date" sortable>
+                  <template #body="slotProps">
+                      {{ slotProps.data.date ? new Date(slotProps.data.date).toLocaleDateString() : 'Invalid Date' }}
+                  </template>
+              </Column>
+              <Column field="notes" header="Notes" sortable></Column>
+          </DataTable>
       </div>
 
       <Dialog v-model:visible="transactionDialog" header="Transaction Details" :modal="true" style="width: 400px">
@@ -215,8 +199,6 @@ function resetPagination() {
       </Dialog>
   </div>
 </template>
-
-
 
 <style>
 .field {
