@@ -7,21 +7,17 @@ const transactions = ref(null);
 onMounted(() => {
   TransactionService.getTransactions().then((data) => (transactions.value = data));
 });
-function getCategoryName(categoryId: string): string {
-  const category = categories.value.find((cat: any) => cat.id === categoryId);
-  return category ? category.name : 'Unknown';
-}
 </script>
 
 <template>
     <div class="card">
         <div class="font-semibold text-xl mb-4">Recent Transactions</div>
         <DataTable :value="transactions" :rows="5" :paginator="true" responsiveLayout="scroll">
-<!--            <Column field="categoryId" header="Category" sortable>-->
-<!--                <template #body="slotProps">-->
-<!--                  {{ getCategoryName(slotProps.data.categoryId) }}-->
-<!--                </template>-->
-<!--            </Column>-->
+            <Column field="categoryId" header="Category" sortable>
+                <template #body="slotProps">
+                  {{ slotProps.data.category.name }}
+                </template>
+            </Column>
             <Column field="type" header="Type" sortable>
                 <template #body="slotProps">
                   {{ slotProps.data.type === 1 ? 'Income' : 'Expense' }}
