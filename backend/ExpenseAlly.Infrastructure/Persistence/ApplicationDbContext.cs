@@ -37,8 +37,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<Budget> Budgets => Set<Budget>();
     public DbSet<BudgetDetail> BudgetDetails => Set<BudgetDetail>();
     public DbSet<Notification> Notifications => Set<Notification>();
-
-
+    public DbSet<Contribution> Contributions => Set<Contribution>();
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

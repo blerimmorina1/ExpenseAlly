@@ -32,9 +32,12 @@ const initialSavingGoalState: SavingGoal = {
 
 const savingGoals = ref<SavingGoal[]>([]);
 const savingGoal = ref<SavingGoal>({ ...initialSavingGoalState });
+const type = ref('new');
 const savingGoalDialog = ref(false);
 const deleteSavingGoalDialog = ref(false);
+const showContributeDialog = ref(false);
 const submitted = ref(false);
+const contributeAmount = ref(0);
 
 const showToast = (severity: string, summary: string, detail: string) => {
   toast.add({ severity, summary, detail, life: 3000 });
@@ -62,6 +65,7 @@ const fetchSavingGoals = async () => {
 };
 
 const openNew = () => {
+  type.value = 'new';
   savingGoal.value = { ...initialSavingGoalState };
   submitted.value = false;
   savingGoalDialog.value = true;
@@ -127,6 +131,7 @@ const saveSavingGoal = async () => {
 };
 
 const editSavingGoal = (goal: SavingGoal) => {
+  type.value = 'edit';
   savingGoal.value = { ...goal };
   savingGoalDialog.value = true;
 };
@@ -134,6 +139,11 @@ const editSavingGoal = (goal: SavingGoal) => {
 const confirmDeleteSavingGoal = (goal: SavingGoal) => {
   savingGoal.value = { ...goal };
   deleteSavingGoalDialog.value = true;
+}
+
+const contributeSavingGoal = (goal: SavingGoal) => {
+  savingGoal.value = { ...goal };
+  showContributeDialog.value = true;
 }
 
 const deleteSavingGoal = async () => {
@@ -153,6 +163,26 @@ const deleteSavingGoal = async () => {
   }
 };
 
+const contribute = async() => {
+  try {
+    const response = await SavingGoalService.contributeSavingGoal(savingGoal.value.id, contributeAmount.value);
+    if (response.success) {
+      const updatedGoal = response.data;
+      if (savingGoal.value.id) {
+        const index = savingGoals.value.findIndex(g => g.id === updatedGoal.id);
+        if (index !== -1) {
+          savingGoals.value[index] = updatedGoal;
+        }
+      }
+      contributeAmount.value = 0;
+      showContributeDialog.value = false;
+      showToast('success', 'Successful', 'Contributed successfully');
+    }
+  } catch (error) {
+    showToast('error', 'Error', 'Failed to contribute');
+  }
+};
+
 onMounted(() => {
   fetchSavingGoals();
 });
@@ -162,10 +192,12 @@ onMounted(() => {
 <template>
   <div>
     <div class="card">
-      <div class="text-2xl mb-4">Saving Goals</div>
       <Toolbar class="mb-6">
         <template #start>
-          <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
+          <div class="text-xl">Saving Goals</div>
+        </template>
+        <template #end>
+          <Button label="New" icon="pi pi-plus" severity="secondary" @click="openNew" />
         </template>
       </Toolbar>
 
@@ -218,10 +250,10 @@ onMounted(() => {
 
                     <div class="flex gap-2">
                       <div class="flex gap-2">
-                        <Button label="Edit" icon="pi pi-pencil" severity="primary" outlined class="w-full" @click="editSavingGoal(item)" />
-                        <Button label="Delete" icon="pi pi-trash" severity="danger" outlined class="w-full" @click="confirmDeleteSavingGoal(item)" />
+                        <Button icon="pi pi-trash" severity="danger" outlined class="w-full" v-tooltip="'Delete Saving Goal'" @click="confirmDeleteSavingGoal(item)" />
+                        <Button icon="pi pi-pen-to-square" severity="primary" outlined class="w-full" v-tooltip="'Edit Saving Goal'" @click="editSavingGoal(item)" />
                       </div>
-                      <Button label="Contribute" icon="pi pi-briefcase" class="w-full" />
+                      <Button label="Contribute" icon="pi pi-money-bill" outlined class="ml-auto" @click="contributeSavingGoal(item)"/>
                     </div>
                   </div>
                 </div>
@@ -234,7 +266,7 @@ onMounted(() => {
       <Dialog
         v-model:visible="savingGoalDialog"
         :style="{ width: '450px' }"
-        header="Saving Goal Details"
+        :header="type ==='edit' ? 'Edit Saving Goal' : 'Add new Saving Goal'"
         :modal="true"
       >
         <div>
@@ -246,13 +278,13 @@ onMounted(() => {
 
           <div>
             <label for="targetAmount" class="block font-bold mt-2 mb-2">Target Amount</label>
-            <InputNumber id="targetAmount" v-model="savingGoal.targetAmount" required autofocus class="w-full"  />
+            <InputNumber id="targetAmount" mode="currency" currency="EUR" locale="de-DE" v-model="savingGoal.targetAmount" required autofocus class="w-full"  />
             <div v-if="submitted && !savingGoal.targetAmount" class="p-error">Target amount is required.</div>
           </div>
 
           <div>
             <label for="currentAmount" class="block font-bold mt-2 mb-2">Current Amount</label>
-            <InputNumber id="currentAmount" v-model="savingGoal.currentAmount" required autofocus class="w-full" />
+            <InputNumber id="currentAmount" mode="currency" currency="EUR" locale="de-DE"  v-model="savingGoal.currentAmount" required autofocus class="w-full" />
           </div>
 
           <div>
@@ -288,13 +320,15 @@ onMounted(() => {
         </template>
       </Dialog>
 
+      <Dialog v-model:visible="showContributeDialog" header="Contribute" modal>
+        <InputNumber v-model="contributeAmount" mode="currency" currency="EUR" locale="de-DE" placeholder="Amount" />
+        <Button label="Confirm" class="ml-2" @click="contribute()" />
+      </Dialog>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-.p-error {
-  color: red;
-  font-size: 0.8rem;
-}
+
 </style>

@@ -10,5 +10,6 @@ namespace ExpenseAlly.Domain.Entities
         public DateTime? Deadline { get; set; }
         public bool IsCompleted { get; set; } = false;
         public string? Notes { get; set; }
+        public ICollection<Contribution> Contributions { get; set; }
     }
 }

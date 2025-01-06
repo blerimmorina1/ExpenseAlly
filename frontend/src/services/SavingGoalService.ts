@@ -39,5 +39,15 @@ export const SavingGoalService = {
       console.error('Error deleting saving goals:', error);
       throw error;
     }
+  },
+
+  contributeSavingGoal: async (SavingGoalId, amount) => {
+    try {
+      const response = await api.post(`/SavingGoals/${SavingGoalId}/contribute`, {SavingGoalId, amount});
+      return response.data;
+    } catch (error) {
+      console.error('Error contribute to saving goals:', error);
+      throw error;
+    }
   }
 };

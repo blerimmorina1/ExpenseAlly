@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseAlly.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250102202442_AddSavingGoals")]
-    partial class AddSavingGoals
+    [Migration("20250106122051_AddContributions")]
+    partial class AddContributions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,184 @@ namespace ExpenseAlly.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Budget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("The end date of the budget period.");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("The name of the budget.");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("The start date of the budget period.");
+
+                    b.Property<decimal>("TotalLimit")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The total spending limit for the budget.");
+
+                    b.Property<decimal>("TotalSpent")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The total amount spent of the budget.");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Budgets_Id");
+
+                    b.ToTable("Budgets", null, t =>
+                        {
+                            t.HasComment("This entity is used to store user budgets.");
+                        });
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.BudgetDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BudgetId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("The ID of the associated budget.");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("The ID of the associated transaction category.");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Limit")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The spending limit for this category within the budget.");
+
+                    b.Property<decimal>("Spent")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The amount spent for this category within the budget.");
+
+                    b.Property<Guid?>("TransactionCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_BudgetDetails_Id");
+
+                    b.HasIndex("BudgetId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("TransactionCategoryId");
+
+                    b.ToTable("BudgetDetails", null, t =>
+                        {
+                            t.HasComment("This entity is used to store details of budgets, including category limits.");
+                        });
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Contribution", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The contributed amount.");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasComment("The date of the contribution.");
+
+                    b.Property<Guid>("SavingGoalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Contributions_Id");
+
+                    b.HasIndex("SavingGoalId");
+
+                    b.ToTable("Contributions", null, t =>
+                        {
+                            t.HasComment("Stores all contributions made towards saving goals.");
+                        });
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasComment("Indicates whether the notification has been read.");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasComment("The message content of the notification.");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("The title of the notification.");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasComment("The type of the notification.");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Notifications_Id");
+
+                    b.ToTable("Notifications", null, t =>
+                        {
+                            t.HasComment("This entity is used to store all notifications.");
+                        });
+                });
 
             modelBuilder.Entity("ExpenseAlly.Domain.Entities.SavingGoal", b =>
                 {
@@ -86,10 +264,12 @@ namespace ExpenseAlly.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The amount of money involved in the transaction.");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("The ID of the category associated with this transaction.");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -98,7 +278,8 @@ namespace ExpenseAlly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasComment("The date when the transaction occurred.");
 
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -107,10 +288,13 @@ namespace ExpenseAlly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Additional notes or description for the transaction.");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("The type of transaction, such as Income or Expense.");
 
                     b.HasKey("Id")
                         .HasName("PK_Transactions_Id");
@@ -119,7 +303,7 @@ namespace ExpenseAlly.Infrastructure.Migrations
 
                     b.ToTable("Transactions", null, t =>
                         {
-                            t.HasComment("This entity is used to store all the transactions of user added to the system .");
+                            t.HasComment("This entity is used to store all the transactions of user added to the system.");
                         });
                 });
 
@@ -136,7 +320,9 @@ namespace ExpenseAlly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Optional description for the transaction category.");
 
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -146,14 +332,21 @@ namespace ExpenseAlly.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("The name of the transaction category.");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("The type of transaction associated with this category, such as Income or Expense.");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_TransactionCategories_Id");
 
-                    b.ToTable("TransactionCategories");
+                    b.ToTable("TransactionCategories", null, t =>
+                        {
+                            t.HasComment("This entity is used to store all categories for transactions.");
+                        });
                 });
 
             modelBuilder.Entity("ExpenseAlly.Infrastructure.Identity.ApplicationUser", b =>
@@ -368,13 +561,50 @@ namespace ExpenseAlly.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Transaction", b =>
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.BudgetDetail", b =>
                 {
+                    b.HasOne("ExpenseAlly.Domain.Entities.Budget", "Budget")
+                        .WithMany("BudgetDetails")
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_BudgetDetails_Budgets");
+
                     b.HasOne("ExpenseAlly.Domain.Entities.TransactionCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_BudgetDetails_TransactionCategories");
+
+                    b.HasOne("ExpenseAlly.Domain.Entities.TransactionCategory", null)
+                        .WithMany("BudgetDetails")
+                        .HasForeignKey("TransactionCategoryId");
+
+                    b.Navigation("Budget");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Contribution", b =>
+                {
+                    b.HasOne("ExpenseAlly.Domain.Entities.SavingGoal", "SavingGoal")
+                        .WithMany("Contributions")
+                        .HasForeignKey("SavingGoalId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasConstraintName("FK_Contributions_SavingGoals");
+
+                    b.Navigation("SavingGoal");
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("ExpenseAlly.Domain.Entities.TransactionCategory", "Category")
+                        .WithMany("Transactions")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Transactions_Category");
 
                     b.Navigation("Category");
                 });
@@ -428,6 +658,23 @@ namespace ExpenseAlly.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Budget", b =>
+                {
+                    b.Navigation("BudgetDetails");
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.SavingGoal", b =>
+                {
+                    b.Navigation("Contributions");
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.TransactionCategory", b =>
+                {
+                    b.Navigation("BudgetDetails");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

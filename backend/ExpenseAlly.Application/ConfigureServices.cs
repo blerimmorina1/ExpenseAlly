@@ -29,6 +29,7 @@ public static class ConfigureServices
         services.AddTransient<IValidator<EditBudgetCommand>, EditBudgetCommandValidator>();
         services.AddTransient<IValidator<CreateSavingGoalCommand>, CreateSavingGoalValidator>();
         services.AddTransient<IValidator<UpdateSavingGoalCommand>, UpdateSavingGoalValidator>();
+        services.AddTransient<IValidator<ContributeSavingGoalCommand>, ContributeSavingGoalCommandValidator>();
         return services;
     }
 }

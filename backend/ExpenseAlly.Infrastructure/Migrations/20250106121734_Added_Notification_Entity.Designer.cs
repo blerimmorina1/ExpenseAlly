@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseAlly.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250104212331_Added_Notification_Entity")]
+    [Migration("20250106121734_Added_Notification_Entity")]
     partial class Added_Notification_Entity
     {
         /// <inheritdoc />
@@ -123,6 +123,34 @@ namespace ExpenseAlly.Infrastructure.Migrations
                     b.ToTable("BudgetDetails", null, t =>
                         {
                             t.HasComment("This entity is used to store details of budgets, including category limits.");
+                        });
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Contribution", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("The contributed amount.");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasComment("The date of the contribution.");
+
+                    b.Property<Guid>("SavingGoalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Contributions_Id");
+
+                    b.HasIndex("SavingGoalId");
+
+                    b.ToTable("Contributions", null, t =>
+                        {
+                            t.HasComment("Stores all contributions made towards saving goals.");
                         });
                 });
 
@@ -558,6 +586,17 @@ namespace ExpenseAlly.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.Contribution", b =>
+                {
+                    b.HasOne("ExpenseAlly.Domain.Entities.SavingGoal", "SavingGoal")
+                        .WithMany("Contributions")
+                        .HasForeignKey("SavingGoalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Contributions_SavingGoals");
+
+                    b.Navigation("SavingGoal");
+                });
+
             modelBuilder.Entity("ExpenseAlly.Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("ExpenseAlly.Domain.Entities.TransactionCategory", "Category")
@@ -624,6 +663,11 @@ namespace ExpenseAlly.Infrastructure.Migrations
             modelBuilder.Entity("ExpenseAlly.Domain.Entities.Budget", b =>
                 {
                     b.Navigation("BudgetDetails");
+                });
+
+            modelBuilder.Entity("ExpenseAlly.Domain.Entities.SavingGoal", b =>
+                {
+                    b.Navigation("Contributions");
                 });
 
             modelBuilder.Entity("ExpenseAlly.Domain.Entities.TransactionCategory", b =>
