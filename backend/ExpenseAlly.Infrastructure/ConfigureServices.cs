@@ -28,6 +28,7 @@ public static class ConfigureServices
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         return services;
     }

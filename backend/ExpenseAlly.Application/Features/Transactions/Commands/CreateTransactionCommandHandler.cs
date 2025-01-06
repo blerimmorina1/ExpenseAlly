@@ -3,20 +3,23 @@ using ExpenseAlly.Domain.Entities;
 using FluentValidation;
 using ExpenseAlly.Application.Common.Models;
 using Microsoft.Extensions.Logging;
+using ExpenseAlly.Domain.Enums;
 
 namespace ExpenseAlly.Application.Features.Transactions.Commands;
 
 public class CreateTransactionCommandHandler : IRequestHandler<CreateTransactionCommand, ResponseDto>
 {
     private readonly IApplicationDbContext _context;
+    private readonly INotificationService _notificationService;
     private readonly IValidator<CreateTransactionCommand> _validator;
     private readonly ILogger<CreateTransactionCommandHandler> _logger;
 
-    public CreateTransactionCommandHandler(IApplicationDbContext context, IValidator<CreateTransactionCommand> validator, ILogger<CreateTransactionCommandHandler> logger)
+    public CreateTransactionCommandHandler(IApplicationDbContext context, IValidator<CreateTransactionCommand> validator, ILogger<CreateTransactionCommandHandler> logger, INotificationService notificationService)
     {
         _context = context;
         _validator = validator;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
@@ -71,6 +74,18 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
 
             await _context.SaveChangesAsync(cancellationToken);
 
+            if (budget != null)
+            {
+                await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
+
+                var budgetDetails = _context.BudgetDetails.Where(x => x.BudgetId == budget.Id).Include(x => x.Budget).Include(x => x.Category);
+
+                foreach (var detail in budgetDetails)
+                {
+                    await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, detail, cancellationToken);
+                }
+            }
+            
             return new ResponseDto
             {
                 Success = true

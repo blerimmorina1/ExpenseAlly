@@ -1,6 +1,7 @@
 ﻿using ExpenseAlly.Domain.Entities;
 using ExpenseAlly.Infrastructure.Identity;
 using ExpenseAlly.Infrastructure.Persistence.Interceptors;
+using MediatR;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -35,6 +36,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<SavingGoal> SavingGoals => Set<SavingGoal>();
     public DbSet<Budget> Budgets => Set<Budget>();
     public DbSet<BudgetDetail> BudgetDetails => Set<BudgetDetail>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)

@@ -11,6 +11,7 @@ import ToastService from 'primevue/toastservice';
 
 import '@/assets/styles.scss';
 import '@/assets/tailwind.css';
+import signalRService from '@/stores/signalRInstance';
 
 const app = createApp(App);
 const pinia = createPinia();

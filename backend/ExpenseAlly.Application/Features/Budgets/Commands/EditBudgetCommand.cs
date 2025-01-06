@@ -2,6 +2,7 @@
 using ExpenseAlly.Application.Common.Models;
 using ExpenseAlly.Application.Features.Budgets.Dtos;
 using ExpenseAlly.Domain.Entities;
+using ExpenseAlly.Domain.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -21,12 +22,14 @@ public class EditBudgetCommandHandler : IRequestHandler<EditBudgetCommand, Respo
     private readonly IApplicationDbContext _context;
     private readonly IValidator<EditBudgetCommand> _validator;
     private readonly ILogger<EditBudgetCommandHandler> _logger;
+    private readonly INotificationService _notificationService;
 
-    public EditBudgetCommandHandler(IApplicationDbContext context, IValidator<EditBudgetCommand> validator, ILogger<EditBudgetCommandHandler> logger)
+    public EditBudgetCommandHandler(IApplicationDbContext context, IValidator<EditBudgetCommand> validator, ILogger<EditBudgetCommandHandler> logger, INotificationService notificationService)
     {
         _context = context;
         _validator = validator;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseDto> Handle(EditBudgetCommand request, CancellationToken cancellationToken)
@@ -95,6 +98,18 @@ public class EditBudgetCommandHandler : IRequestHandler<EditBudgetCommand, Respo
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (budget != null)
+            {
+                await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
+
+                var budgetDetails = _context.BudgetDetails.Where(x => x.BudgetId == budget.Id).Include(x => x.Budget).Include(x => x.Category);
+
+                foreach (var detail in budgetDetails)
+                {
+                    await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, detail, cancellationToken);
+                }
+            }
 
             return new ResponseDto
             {

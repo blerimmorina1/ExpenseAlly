@@ -1,11 +1,5 @@
 using ExpenseAlly.API.Middlewares;
-using ExpenseAlly.Application.Features.Account.Validators;
-using ExpenseAlly.Application.Features.TransactionCategories.Commands;
-using ExpenseAlly.Application.Features.TransactionCategories.Validators;
-using ExpenseAlly.Application.Features.Transactions.Commands;
-using ExpenseAlly.Application.Features.Transactions.Validators;
 using ExpenseAlly.Infrastructure.Persistence;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +25,18 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
+
+    options.AddPolicy("AllowSpecificOrigin",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")  // Frontend URL
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();  // Allow credentials (cookies, headers, etc.)
+        });
 });
+
+builder.Services.AddSignalR();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -116,10 +121,12 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<NotificationHub>("/api/notificationHub").RequireCors("AllowSpecificOrigin").RequireAuthorization();
 
 var option = new RewriteOptions();
 option.AddRedirect("^$", "swagger");
