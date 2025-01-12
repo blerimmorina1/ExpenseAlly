@@ -41,9 +41,11 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
 
         try
         {
+            var category = _context.TransactionCategories.Where(x => x.Id == request.Transaction.CategoryId).FirstOrDefault(); 
+
             var transaction = new Transaction
             {
-                Type = request.Transaction.Type,
+                Type = category.Type,
                 CategoryId = request.Transaction.CategoryId,
                 Amount = request.Transaction.Amount,
                 Date = request.Transaction.Date,

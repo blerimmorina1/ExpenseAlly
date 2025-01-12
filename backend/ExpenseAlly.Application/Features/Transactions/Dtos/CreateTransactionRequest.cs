@@ -10,7 +10,6 @@ namespace ExpenseAlly.Application.Features.Transactions.Dtos
     public class CreateTransactionRequest
     {
         public Guid CategoryId { get; set; }
-        public TransactionType Type { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string? Notes { get; set; }

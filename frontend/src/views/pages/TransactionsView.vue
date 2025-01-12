@@ -14,7 +14,6 @@ const categories = ref([]);
 const transactionDialog = ref(false);
 const transaction = ref({
     categoryId: '',
-    type: null,
     amount: 0,
     date: new Date().toISOString().split('T')[0],
     notes: '',
@@ -51,7 +50,6 @@ async function fetchTransactions() {
             amount: transaction.amount || 0,
             date: transaction.date || null,
             notes: transaction.notes || '',
-            type: transaction.type,
             categoryName: transaction.category?.name || 'Unknown',
         }));
         console.log('Fetched Transactions:', transactions.value);
@@ -64,7 +62,6 @@ async function fetchTransactions() {
 function openNew() {
     transaction.value = {
         categoryId: '',
-        type: null,
         amount: 0,
         date: new Date().toISOString().split('T')[0],
         notes: '',
@@ -77,7 +74,7 @@ function hideDialog() {
 }
 
 async function saveTransaction() {
-    if (!transaction.value.categoryId || !transaction.value.type || transaction.value.amount <= 0) {
+    if (!transaction.value.categoryId  || transaction.value.amount <= 0) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Please fill all required fields', life: 3000 });
         return;
     }
@@ -85,7 +82,6 @@ async function saveTransaction() {
     const payload = {
         Transaction: {
             CategoryId: transaction.value.categoryId,
-            Type: transaction.value.type,
             Amount: transaction.value.amount,
             Date: transaction.value.date ? new Date(transaction.value.date).toISOString() : null,
             Notes: transaction.value.notes?.trim() || null,
@@ -147,7 +143,7 @@ function resetPagination(event) {
               <Column field="amount" header="Amount" sortable></Column>
               <Column field="date" header="Date" sortable>
                   <template #body="slotProps">
-                      {{ slotProps.data.date ? new Date(slotProps.data.date).toLocaleDateString() : 'Invalid Date' }}
+                      {{$formatters.formatDate(slotProps.data.date) }}
                   </template>
               </Column>
               <Column field="notes" header="Notes" sortable></Column>
@@ -170,27 +166,12 @@ function resetPagination(event) {
               </div>
 
               <div class="field">
-                  <label for="type" class="block">Type</label>
-                  <Dropdown
-                      class="w-full"
-                      id="type"
-                      v-model="transaction.type"
-                      :options="typeOptions"
-                      optionLabel="label"
-                      optionValue="value"
-                      placeholder="Select a Type"
-                  />
-              </div>
-
-              <div class="field">
                   <label for="amount" class="block">Amount</label>
                   <InputNumber
                       class="w-full"
                       id="amount"
                       v-model="transaction.amount"
-                      mode="currency"
-                      currency="USD"
-                      locale="en-US"
+                      mode="currency" currency="EUR" locale="de-DE"
                   />
               </div>
 
