@@ -103,6 +103,7 @@ const saveSavingGoal = async () => {
   };
 
   try {
+    debugger;
     const response = savingGoal.value.id
       ? await SavingGoalService.updateSavingGoal({ ...payload, id: savingGoal.value.id })
       : await SavingGoalService.createSavingGoal(payload);
@@ -283,8 +284,8 @@ onMounted(() => {
           </div>
 
           <div>
-            <label for="currentAmount" class="block font-bold mt-2 mb-2">Current Amount</label>
-            <InputNumber id="currentAmount" mode="currency" currency="EUR" locale="de-DE"  v-model="savingGoal.currentAmount" required autofocus class="w-full" />
+            <label v-if="!savingGoal.id" for="currentAmount" class="block font-bold mt-2 mb-2">Current Amount</label>
+            <InputNumber v-if="!savingGoal.id" id="currentAmount" mode="currency" currency="EUR" locale="de-DE"  v-model="savingGoal.currentAmount" required autofocus class="w-full" />
           </div>
 
           <div>

@@ -1,8 +1,9 @@
+using ExpenseAlly.Domain.Common;
+
 namespace ExpenseAlly.Domain.Entities;
 
-public class Contribution
+public class Contribution : BaseAuditableEntity
 {
-    public Guid Id { get; set; }
     public Guid SavingGoalId { get; set; }
     public decimal Amount { get; set; }
     public DateTime Date { get; set; }

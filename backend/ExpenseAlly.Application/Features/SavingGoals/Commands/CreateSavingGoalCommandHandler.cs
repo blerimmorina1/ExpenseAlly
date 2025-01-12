@@ -3,6 +3,7 @@ using ExpenseAlly.Domain.Entities;
 using FluentValidation;
 using ExpenseAlly.Application.Common.Models;
 using Microsoft.Extensions.Logging;
+using ExpenseAlly.Domain.Enums;
 
 namespace ExpenseAlly.Application.Features.SavingGoals.Commands;
 
@@ -11,12 +12,14 @@ public class CreateSavingGoalCommandHandler : IRequestHandler<CreateSavingGoalCo
     private readonly IApplicationDbContext _context;
     private readonly IValidator<CreateSavingGoalCommand> _validator;
     private readonly ILogger<CreateSavingGoalCommandHandler> _logger;
+    private readonly INotificationService _notificationService;
 
-    public CreateSavingGoalCommandHandler(IApplicationDbContext context, IValidator<CreateSavingGoalCommand> validator, ILogger<CreateSavingGoalCommandHandler> logger)
+    public CreateSavingGoalCommandHandler(IApplicationDbContext context, IValidator<CreateSavingGoalCommand> validator, ILogger<CreateSavingGoalCommandHandler> logger, INotificationService notificationService)
     {
         _context = context;
         _validator = validator;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseDto> Handle(CreateSavingGoalCommand request, CancellationToken cancellationToken)
@@ -43,12 +46,29 @@ public class CreateSavingGoalCommandHandler : IRequestHandler<CreateSavingGoalCo
                 TargetAmount = request.TargetAmount,
                 CurrentAmount = request.CurrentAmount,
                 Deadline = request.Deadline,
-                IsCompleted = request.IsCompleted,
+                IsCompleted = request.CurrentAmount >= request.TargetAmount? true: false,
                 Notes = request.Notes
             };
-            
+
             _context.SavingGoals.Add(savingGoal);
+
+            if (request.CurrentAmount > 0)
+            {
+                var contribution = new Contribution
+                {
+                    SavingGoalId = savingGoal.Id,
+                    Amount = request.CurrentAmount,
+                    Date = DateTime.UtcNow
+                };
+                _context.Contributions.Add(contribution);
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (savingGoal.IsCompleted)
+            {
+                await _notificationService.SendNotificationAsync(NotificationType.SavingGoal, savingGoal, cancellationToken);
+            }
 
             return new ResponseDto
             {

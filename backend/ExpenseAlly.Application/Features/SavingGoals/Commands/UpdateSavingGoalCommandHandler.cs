@@ -57,9 +57,7 @@ public class UpdateSavingGoalCommandHandler : IRequestHandler<UpdateSavingGoalCo
             
             savingGoal.Name = request.Name;
             savingGoal.TargetAmount = request.TargetAmount;
-            savingGoal.CurrentAmount = request.CurrentAmount;
             savingGoal.Deadline = request.Deadline;
-            savingGoal.IsCompleted = request.IsCompleted;
             savingGoal.Notes = request.Notes;
 
             _context.SavingGoals.Update(savingGoal);

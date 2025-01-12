@@ -24,17 +24,7 @@ public class SavingGoalsController : ApiControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateSavingGoal(Guid id, [FromBody] UpdateSavingGoalCommand command)
     {
-        if (id != command.Id)
-        {
-            return BadRequest(new { Message = "Mismatched Saving Goal ID." });
-        }
-
         var result = await _mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
 
         return Ok(result);
     }
@@ -44,13 +34,9 @@ public class SavingGoalsController : ApiControllerBase
     {
         var result = await _mediator.Send(new DeleteSavingGoalCommand { Id = id });
 
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
         return Ok(result);
     }
+
     [HttpPost("{id}/Contribute")]
     public async Task<IActionResult> Contribute(Guid id, [FromBody] ContributeSavingGoalCommand command)
     {
@@ -60,12 +46,6 @@ public class SavingGoalsController : ApiControllerBase
         }
 
         var result = await _mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
         return Ok(result);
     }
 }

@@ -41,9 +41,6 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
 
         try
         {
-            var category = await _context.TransactionCategories
-                .FirstOrDefaultAsync(c => c.Id == request.Transaction.CategoryId, cancellationToken);
-
             var transaction = new Transaction
             {
                 Type = request.Transaction.Type,
@@ -51,19 +48,18 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
                 Amount = request.Transaction.Amount,
                 Date = request.Transaction.Date,
                 Notes = request.Transaction.Notes,
-                Category = category
             };
 
             _context.Transactions.Add(transaction);
 
             // Update the budget
             var budget = await _context.Budgets
-                .Include(b => b.BudgetDetails)
                 .FirstOrDefaultAsync(b => b.StartDate <= request.Transaction.Date && b.EndDate >= request.Transaction.Date, cancellationToken);
 
+            BudgetDetail? categoryDetail = null;
             if (budget != null)
             {
-                var categoryDetail = budget.BudgetDetails.FirstOrDefault(cd => cd.CategoryId == request.Transaction.CategoryId);
+                categoryDetail = _context.BudgetDetails.Include(x => x.Budget).Include(x => x.Category).FirstOrDefault(cd => cd.CategoryId == request.Transaction.CategoryId && cd.BudgetId == budget.Id);
 
                 if (categoryDetail != null)
                 {
@@ -78,14 +74,12 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
             {
                 await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
 
-                var budgetDetails = _context.BudgetDetails.Where(x => x.BudgetId == budget.Id).Include(x => x.Budget).Include(x => x.Category);
-
-                foreach (var detail in budgetDetails)
+                if (categoryDetail != null)
                 {
-                    await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, detail, cancellationToken);
+                    await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, categoryDetail, cancellationToken);
                 }
             }
-            
+
             return new ResponseDto
             {
                 Success = true

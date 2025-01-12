@@ -1,6 +1,7 @@
 using ExpenseAlly.Application.Common.Interfaces;
 using ExpenseAlly.Application.Common.Models;
 using ExpenseAlly.Domain.Entities;
+using ExpenseAlly.Domain.Enums;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,11 +18,13 @@ public class ContributeSavingGoalCommandHandler : IRequestHandler<ContributeSavi
 {
     private readonly IApplicationDbContext _context;
     private readonly ILogger<ContributeSavingGoalCommandHandler> _logger;
+    private readonly INotificationService _notificationService;
 
-    public ContributeSavingGoalCommandHandler(IApplicationDbContext context, ILogger<ContributeSavingGoalCommandHandler> logger)
+    public ContributeSavingGoalCommandHandler(IApplicationDbContext context, ILogger<ContributeSavingGoalCommandHandler> logger, INotificationService notificationService)
     {
         _context = context;
         _logger = logger;
+        _notificationService = notificationService;
     }
 
     public async Task<ResponseDto> Handle(ContributeSavingGoalCommand request, CancellationToken cancellationToken)
@@ -53,7 +56,6 @@ public class ContributeSavingGoalCommandHandler : IRequestHandler<ContributeSavi
             
             var contribution = new Contribution
             {
-                Id = Guid.NewGuid(),
                 SavingGoalId = request.SavingGoalId,
                 Amount = request.Amount,
                 Date = DateTime.UtcNow
@@ -61,6 +63,11 @@ public class ContributeSavingGoalCommandHandler : IRequestHandler<ContributeSavi
             _context.Contributions.Add(contribution);
             
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (savingGoal.IsCompleted)
+            {
+                await _notificationService.SendNotificationAsync(NotificationType.SavingGoal, savingGoal, cancellationToken);
+            }
 
             return new ResponseDto
             {

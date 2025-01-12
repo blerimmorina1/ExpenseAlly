@@ -7,10 +7,14 @@ public class UpdateSavingGoalValidator : AbstractValidator<UpdateSavingGoalComma
     {
         RuleFor(x => x.Id).
             NotEmpty().WithMessage("Id is required.");
-        RuleFor(x => x.Name).
-            NotEmpty().WithMessage("Name is required.");
+
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Name is required.")
+            .MaximumLength(255).WithMessage("Name cannot exceed 255 characters.");
+
         RuleFor(x => x.TargetAmount).
-            GreaterThan(0).WithMessage("Target amount must be greater than zero.");
+            GreaterThan(0).WithMessage("Target amount must be greater than zero.")
+            .GreaterThanOrEqualTo(x => x.CurrentAmount).WithMessage("Target amount can't be less than current amount.");
         
         RuleFor(x => x.Deadline)
             .Must(BeAValidDate).WithMessage("Invalid deadline.")

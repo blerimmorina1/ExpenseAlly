@@ -59,9 +59,9 @@ public class SaveCategoryBudgetCommandHandler : IRequestHandler<SaveCategoryBudg
 
             if (budget != null)
             {
-                //await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
-
                 await _notificationService.SendNotificationAsync(NotificationType.BudgetDetail, budgetDetail, cancellationToken);
+
+                await _notificationService.SendNotificationAsync(NotificationType.Budget, budget, cancellationToken);
             }
 
             return new ResponseDto
