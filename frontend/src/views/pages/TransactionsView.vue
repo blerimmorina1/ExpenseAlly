@@ -3,6 +3,11 @@ import { ref, onMounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { TransactionService } from '@/services/TransactionsService';
 import { CategoryService } from '@/services/CategoryService';
+import { FilterMatchMode } from '@primevue/core/api'
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 const transactions = ref([]);
 const categories = ref([]);
@@ -117,13 +122,22 @@ function resetPagination(event) {
 <template>
   <div>
       <div class="card">
-          <Toolbar class="mb-4">
+          <Toolbar class="mb-2">
               <template #start>
-                  <Button label="New Transaction" icon="pi pi-plus" @click="openNew" />
+                <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
+              </template>
+              <template #end>
+                <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV" />
               </template>
           </Toolbar>
 
-          <DataTable :value="transactions" :paginator="true" :rows="10" :first="firstRowIndex" @update:page="resetPagination">
+          <DataTable :value="transactions" :paginator="true" :rows="10" :first="firstRowIndex" :filters="filters" @update:page="resetPagination">
+            <template #header>
+              <div class="flex justify-between items-center">
+                <h4 class="m-0 text-xl">Manage Transactions</h4>
+                <InputText v-model="filters.global.value" placeholder="Search..." />
+              </div>
+            </template>
               <Column field="categoryName" header="Category" sortable></Column>
               <Column field="type" header="Type" sortable>
                   <template #body="slotProps">
@@ -145,6 +159,7 @@ function resetPagination(event) {
               <div class="field">
                   <label for="categoryId" class="block">Category</label>
                   <Dropdown
+                      class="w-full"
                       id="categoryId"
                       v-model="transaction.categoryId"
                       :options="categories"
@@ -157,6 +172,7 @@ function resetPagination(event) {
               <div class="field">
                   <label for="type" class="block">Type</label>
                   <Dropdown
+                      class="w-full"
                       id="type"
                       v-model="transaction.type"
                       :options="typeOptions"
@@ -169,6 +185,7 @@ function resetPagination(event) {
               <div class="field">
                   <label for="amount" class="block">Amount</label>
                   <InputNumber
+                      class="w-full"
                       id="amount"
                       v-model="transaction.amount"
                       mode="currency"
@@ -180,6 +197,7 @@ function resetPagination(event) {
               <div class="field">
                   <label for="date" class="block">Date</label>
                   <InputText
+                      class="w-full"
                       id="date"
                       type="date"
                       v-model="transaction.date"
@@ -188,7 +206,7 @@ function resetPagination(event) {
 
               <div class="field">
                   <label for="notes" class="block">Notes</label>
-                  <Textarea id="notes" v-model="transaction.notes" rows="3" cols="20" />
+                  <Textarea class="w-full" id="notes" v-model="transaction.notes" rows="3" cols="20" />
               </div>
           </div>
 

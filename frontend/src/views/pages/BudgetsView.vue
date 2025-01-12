@@ -271,9 +271,10 @@ function calculateTotalLimit() {
 <template>
     <div>
         <div class="card">
-            <span class="text-primary">
-                {{ budgetName }}
-            </span>
+            <div style="display: flex">
+            <div style="margin-top: 20px">
+              <h4 class="m-0 text-xl"> {{ budgetName }}</h4>
+            </div>
             <div class="w-full text-center mb-4">
                 <div class="inline-block">
                     <label for="month-picker" class="font-bold block mb-2">Month</label>
@@ -281,20 +282,21 @@ function calculateTotalLimit() {
                         <!-- Left arrow button -->
                         <button class="p-2 p-button-secondary rounded-l-md"
                             @click="navigateMonth(-1)">
-                            &lt;
+                            <span class="pi pi-chevron-left"></span>
                         </button>
 
                         <!-- Month picker -->
                         <DatePicker id="month-picker" v-model="selectedMonth" view="month" dateFormat="MM yy"
-                            class="w-full mx-2" change="fetchBudgetData()" />
+                            class="w-full mx-2" @date-select="fetchBudgetData" />
 
                         <!-- Right arrow button -->
                         <button class="p-2 p-button-secondary rounded-r-md"
                             @click="navigateMonth(1)">
-                            &gt;
+                          <span class="pi pi-chevron-right"></span>
                         </button>
                     </div>
                 </div>
+            </div>
             </div>
             <Toolbar class="mb-6">
                 <template #start>
@@ -323,7 +325,7 @@ function calculateTotalLimit() {
                     <!-- Export Button -->
                     <div v-if="budgetId">
                         <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV($event)" />
-                        <Button icon="pi pi-trash" class="ml-1" outlined rounded severity="danger" @click="confirmDeleteBudget()" />
+                        <Button icon="pi pi-trash" class="ml-2" outlined rounded severity="danger" @click="confirmDeleteBudget()" />
                     </div>
                 </template>
             </Toolbar>
