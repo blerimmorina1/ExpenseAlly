@@ -2,8 +2,13 @@
 import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { SavingGoalService } from '@/services/SavingGoalService'
+import { FilterMatchMode } from '@primevue/core/api'
 
 const toast = useToast();
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+});
 
 interface SavingGoal {
   id?: string;
@@ -193,18 +198,24 @@ onMounted(() => {
 <template>
   <div>
     <div class="card">
-      <Toolbar class="mb-6">
+      <Toolbar class="mb-2">
         <template #start>
-          <div class="text-xl">Saving Goals</div>
+          <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
         </template>
         <template #end>
-          <Button label="New" icon="pi pi-plus" severity="secondary" @click="openNew" />
+          <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV" />
         </template>
       </Toolbar>
 
-      <DataView :value="savingGoals" :layout="'grid'">
+      <DataView :value="savingGoals" :layout="'grid'" :filters="filters" >
+        <template #header>
+          <div class="flex justify-between items-center">
+            <h4 class="m-0 text-xl">Manage Saving Goals</h4>
+            <InputText v-model="filters.global.value" placeholder="Search..." />
+          </div>
+        </template>
         <template #grid="slotProps">
-          <div class="grid grid-cols-12 gap-4">
+          <div class="grid grid-cols-12 gap-4 mt-4">
             <div v-for="(item, index) in slotProps.items" :key="index" class="col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-4 p-2">
               <div class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded flex flex-col">
                 <div>

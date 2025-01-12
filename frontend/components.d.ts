@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddCategory: typeof import('./src/components/TransactionCategory/AddCategory.vue')['default']
     BestSellingWidget: typeof import('./src/components/dashboard/BestSellingWidget.vue')['default']
+    Breadcrumb: typeof import('@/components/BreadcrumbTop.vue')['default']
+    BreadcrumbTop: typeof import('./src/components/BreadcrumbTop.vue')['default']
     Button: typeof import('primevue/button')['default']
     CategoryList: typeof import('./src/components/TransactionCategory/CategoryList.vue')['default']
     Chart: typeof import('primevue/chart')['default']

@@ -167,10 +167,10 @@ function exportCSV() {
 <template>
   <div>
     <div class="card">
-      <Toolbar class="mb-6">
+      <Toolbar class="mb-2">
         <template #start>
           <Button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" @click="openNew" />
-          <Button label="Delete" icon="pi pi-trash" severity="secondary" @click="confirmDeleteSelected" :disabled="!selectedCategories || !selectedCategories.length" />
+          <Button label="Delete" icon="pi pi-trash" severity="secondary"class="mr-2" @click="confirmDeleteSelected" :disabled="!selectedCategories || !selectedCategories.length" />
         </template>
         <template #end>
           <Button label="Export" icon="pi pi-upload" severity="secondary" @click="exportCSV" />
@@ -191,15 +191,14 @@ function exportCSV() {
       >
         <template #header>
           <div class="flex justify-between items-center">
-            <h4 class="m-0">Manage Categories</h4>
+            <h4 class="m-0 text-xl">Manage Categories</h4>
             <InputText v-model="filters.global.value" placeholder="Search..." />
           </div>
         </template>
-
         <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column>
         <Column field="name" header="Name" sortable style="min-width: 16rem"></Column>
-        <Column field="description" header="Description" sortable style="min-width: 20rem"></Column>
         <Column field="type" header="Type" sortable style="min-width: 10rem"></Column>
+        <Column field="description" header="Description" sortable style="min-width: 20rem"></Column>
         <Column :exportable="false" style="min-width: 12rem">
           <template #body="slotProps">
             <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editCategory(slotProps.data)" />
@@ -218,24 +217,25 @@ function exportCSV() {
       <div>
         <!-- Name Input -->
         <div>
-          <label for="name" class="block font-bold mb-3">Name</label>
-          <InputText id="name" v-model="category.name" required autofocus />
+          <label for="name" class="block font-bold mt-3 mb-1">Name</label>
+          <InputText class="w-full" id="name" v-model="category.name" required autofocus />
           <small v-if="submitted && !category.name" class="p-error">Name is required.</small>
-        </div>
-
-        <!-- Description Input -->
-        <div>
-          <label for="description" class="block font-bold mb-3">Description</label>
-          <Textarea id="description" v-model="category.description" rows="3" cols="20" />
-          <small v-if="submitted && category.description && category.description.length > 250" class="p-error">Description cannot exceed 250 characters.</small>
         </div>
 
         <!-- Type Dropdown -->
         <div>
-          <label for="type" class="block font-bold mb-3">Type</label>
-          <Select v-model="category.type" :options="types" optionLabel="label" placeholder="Select a Type" />
+          <label for="type" class="block font-bold mt-3 mb-1">Type</label>
+          <Select class="w-full" v-model="category.type" :options="types" optionLabel="label" placeholder="Select a Type" />
           <small v-if="submitted && !category.type" class="p-error">Type is required.</small>
         </div>
+
+        <!-- Description Input -->
+        <div>
+          <label for="description" class="block font-bold mt-3 mb-1">Description</label>
+          <Textarea class="w-full" id="description" v-model="category.description" rows="3" cols="20" />
+          <small v-if="submitted && category.description && category.description.length > 250" class="p-error">Description cannot exceed 250 characters.</small>
+        </div>
+
       </div>
 
       <template #footer>
